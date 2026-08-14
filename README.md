@@ -11,7 +11,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Site Oficial](https://img.shields.io/badge/Site-Evangelho%20das%20Dimenúveis-C5A059)](https://dimenuvel.github.io/Evangelho-das-Dimenuveis-site/)
 
-> 📱 **Aplicativo Android Disponível**: Baixe a versão para Android (APK v1) diretamente na aba de [Releases no GitHub](https://github.com/dimenuvel/Evangelho-das-Dimenuveis-Som/releases/tag/v1).
+> 📱 **Aplicativo Android Disponível**: Baixe a versão para Android (APK v1) diretamente na aba de [Releases no GitHub](https://github.com/dimenuvel/Evangelho-das-Dimenuveis-Som/releases/tag/v1.2).
 
 ---
 
