@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, BookOpen, ShieldAlert, Sparkles, Headphones, Compass } from 'lucide-react';
 import { DIMENUVEIS_INFO } from '../../presets/dimenuveisPresets';
+import { useTheme } from '../../context/ThemeContext';
 
 interface GuideModalProps {
   isOpen: boolean;
@@ -9,6 +10,7 @@ interface GuideModalProps {
 }
 
 export const GuideModal: React.FC<GuideModalProps> = ({ isOpen, onClose, onOpenTour }) => {
+  const { isLight } = useTheme();
   if (!isOpen) return null;
 
   return (
@@ -99,26 +101,29 @@ export const GuideModal: React.FC<GuideModalProps> = ({ isOpen, onClose, onOpenT
             <span>As Sete Dimenúveis Canônicas</span>
           </h3>
           <div className="space-y-2">
-            {DIMENUVEIS_INFO.map((d) => (
-              <div
-                key={d.id}
-                className="p-3 bg-[#1A1614] border border-[#C5A05922] flex items-start gap-3"
-              >
-                <span
-                  className="w-7 h-7 flex items-center justify-center font-serif text-sm font-bold shrink-0 border"
-                  style={{ color: d.color, borderColor: `${d.color}60`, backgroundColor: `${d.color}15` }}
+            {DIMENUVEIS_INFO.map((d) => {
+              const badgeColor = isLight ? d.accentColor : d.color;
+              return (
+                <div
+                  key={d.id}
+                  className="p-3 bg-[#1A1614] border border-[#C5A05922] flex items-start gap-3"
                 >
-                  {d.id}
-                </span>
-                <div className="space-y-0.5 text-xs">
-                  <div className="flex items-center gap-2">
-                    <span className="font-serif italic text-[#C5A059]">{d.name}</span>
-                    <span className="text-[10px] font-mono text-[#D4CBBF]/60">({d.suggestedBaseFreq} Hz)</span>
+                  <span
+                    className="w-7 h-7 flex items-center justify-center font-serif text-sm font-bold shrink-0 border"
+                    style={{ color: badgeColor, borderColor: `${badgeColor}80`, backgroundColor: `${badgeColor}18` }}
+                  >
+                    {d.id}
+                  </span>
+                  <div className="space-y-0.5 text-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="font-serif italic font-bold text-[#C5A059]">{d.name}</span>
+                      <span className="text-[10px] font-mono text-[#D4CBBF]/75">({d.suggestedBaseFreq} Hz)</span>
+                    </div>
+                    <p className="text-[#D4CBBF] leading-relaxed text-[11px]">{d.description}</p>
                   </div>
-                  <p className="text-[#D4CBBF]/80 leading-relaxed text-[11px]">{d.description}</p>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 

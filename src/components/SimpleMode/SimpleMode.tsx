@@ -4,6 +4,7 @@ import { DIMENUVEIS_INFO, CANONICAL_PRESETS } from '../../presets/dimenuveisPres
 import { SoundPreset, AudioLayer, VisualizerMode } from '../../types';
 import { calculateBeatDifference, getBeatBandInfo } from '../../audio/audioMath';
 import { SpiralVisualizer } from '../Visualizer/SpiralVisualizer';
+import { useTheme } from '../../context/ThemeContext';
 
 interface SimpleModeProps {
   currentPreset: SoundPreset;
@@ -66,6 +67,7 @@ export const SimpleMode: React.FC<SimpleModeProps> = ({
   onStopTimer,
   onDismissCompleted,
 }) => {
+  const { isLight } = useTheme();
   const [selectedTimerSec, setSelectedTimerSec] = useState<number>(0);
 
   // Active Dimenúvel info if linked
@@ -157,7 +159,7 @@ export const SimpleMode: React.FC<SimpleModeProps> = ({
                   <span className="text-[10px] font-mono font-bold text-[#C5A059] opacity-80">
                     0{idx + 1}
                   </span>
-                  <span className="text-xs font-serif" style={{ color: dim.color }}>
+                  <span className="text-xs font-serif font-bold" style={{ color: isLight ? dim.accentColor : dim.color }}>
                     {dim.symbol}
                   </span>
                 </div>

@@ -41,33 +41,34 @@
   --bg-panel: #F3EFE8;
   --bg-input: #EBE5DB;
   --bg-elevated: #F8F5F0;
-  --bg-header: rgba(250, 247, 242, 0.92);
-  --bg-radial: radial-gradient(circle at 50% 50%, #FFFFFF 0%, #EFE9E0 100%);
-  --modal-overlay: rgba(30, 26, 22, 0.65);
+  --bg-header: rgba(250, 247, 242, 0.94);
+  --bg-radial: radial-gradient(circle at 50% 50%, #FFFFFF 0%, #EDE6DA 100%);
+  --modal-overlay: rgba(24, 21, 18, 0.72);
 
-  --text-primary: #26211C;
-  --text-secondary: #594F45;
-  --text-muted: rgba(89, 79, 69, 0.75);
-  --text-inverse: #FAF7F2;
+  /* High contrast text colors specifically calibrated for WCAG AAA & AA */
+  --text-primary: #1A1612;   /* Deep charcoal black for main headings & primary text (15.5:1 contrast) */
+  --text-secondary: #3D352C; /* Deep warm slate brown for labels & body (9:1 contrast) */
+  --text-muted: #54493D;     /* Dark amber-slate for descriptions & sublabels (6.5:1 contrast) */
+  --text-inverse: #FFFFFF;   /* Pure white text on dark buttons */
 
-  --accent-gold: #8E6B23;
-  --accent-gold-hover: #735416;
-  --accent-gold-subtle: rgba(142, 107, 35, 0.08);
-  --accent-gold-border: rgba(142, 107, 35, 0.28);
+  --accent-gold: #785310;    /* Deep golden bronze with 5.5:1 contrast against light backgrounds */
+  --accent-gold-hover: #5A3E08;
+  --accent-gold-subtle: rgba(120, 83, 16, 0.09);
+  --accent-gold-border: rgba(120, 83, 16, 0.32);
 
-  --border-subtle: rgba(142, 107, 35, 0.2);
-  --border-medium: rgba(142, 107, 35, 0.38);
-  --border-strong: rgba(142, 107, 35, 0.7);
+  --border-subtle: rgba(120, 83, 16, 0.22);
+  --border-medium: rgba(120, 83, 16, 0.42);
+  --border-strong: rgba(120, 83, 16, 0.78);
 
-  --canvas-bg: rgba(248, 245, 239, 0.32);
+  --canvas-bg: rgba(250, 247, 242, 0.32);
   --scrollbar-track: #FAF7F2;
-  --scrollbar-thumb: rgba(142, 107, 35, 0.35);
-  --scrollbar-thumb-hover: #8E6B23;
-  --selection-bg: rgba(142, 107, 35, 0.18);
-  --selection-text: #8E6B23;
-  --range-track: #E4DDD2;
-  --range-thumb: #8E6B23;
-  --range-thumb-shadow: rgba(142, 107, 35, 0.35);
+  --scrollbar-thumb: rgba(120, 83, 16, 0.38);
+  --scrollbar-thumb-hover: #785310;
+  --selection-bg: rgba(120, 83, 16, 0.2);
+  --selection-text: #785310;
+  --range-track: #E2DBD0;
+  --range-thumb: #785310;
+  --range-thumb-shadow: rgba(120, 83, 16, 0.35);
 }
 
 @layer base {
@@ -161,9 +162,11 @@ input[type="range"]::-webkit-slider-thumb {
   animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Light Theme Component Adaptations */
+/* =========================================================================
+   LIGHT THEME ENHANCEMENTS & CONTRAST CALIBRATION
+   ========================================================================= */
 [data-theme="light"] {
-  /* Surface Overrides */
+  /* Surfaces */
   .bg-\[\#0F0E0D\] {
     background-color: var(--bg-app) !important;
   }
@@ -174,7 +177,7 @@ input[type="range"]::-webkit-slider-thumb {
     background-color: var(--bg-card) !important;
   }
   .bg-\[\#141210\]\/90, .bg-\[\#141210\]\/85, .bg-\[\#141210\]\/60 {
-    background-color: rgba(255, 255, 255, 0.9) !important;
+    background-color: rgba(255, 255, 255, 0.94) !important;
   }
   .bg-\[\#1A1614\] {
     background-color: var(--bg-panel) !important;
@@ -183,19 +186,63 @@ input[type="range"]::-webkit-slider-thumb {
     background-color: var(--bg-elevated) !important;
   }
   
-  /* Text Overrides */
-  .text-\[\#D4CBBF\] {
+  /* Primary & Solid Text Overrides */
+  .text-\[\#D4CBBF\],
+  .text-\[\#d4cbbf\] {
     color: var(--text-primary) !important;
   }
-  .text-\[\#C5A059\] {
+
+  /* Opacity Variants of Text (Crucial for high readability in Light Mode) */
+  .text-\[\#D4CBBF\]\/90,
+  .text-\[\#D4CBBF\]\/85,
+  .text-\[\#D4CBBF\]\/80 {
+    color: var(--text-secondary) !important;
+  }
+  .text-\[\#D4CBBF\]\/75,
+  .text-\[\#D4CBBF\]\/70,
+  .text-\[\#D4CBBF\]\/65,
+  .text-\[\#D4CBBF\]\/60 {
+    color: var(--text-muted) !important;
+  }
+  .text-\[\#D4CBBF\]\/50,
+  .text-\[\#D4CBBF\]\/40,
+  .text-\[\#D4CBBF\]\/30 {
+    color: var(--text-muted) !important;
+  }
+
+  .text-\[\#A89F91\],
+  .text-\[\#A89F91\]\/80,
+  .text-\[\#A89F91\]\/60 {
+    color: var(--text-secondary) !important;
+  }
+
+  /* White hover text overrides */
+  .group-hover\:text-\[\#FFFFFF\]:hover,
+  .group:hover .group-hover\:text-\[\#FFFFFF\],
+  .hover\:text-white:hover {
+    color: var(--text-primary) !important;
+  }
+
+  /* Golden Accent Text Overrides */
+  .text-\[\#C5A059\],
+  .text-\[\#c5a059\] {
     color: var(--accent-gold) !important;
   }
+  .text-\[\#C5A059\]\/90,
+  .text-\[\#C5A059\]\/80,
+  .text-\[\#C5A059\]\/70,
+  .text-\[\#C5A059\]\/60 {
+    color: var(--accent-gold) !important;
+  }
+
+  /* Inverse Text (White inside solid gold badges/buttons) */
   .text-\[\#0F0E0D\] {
     color: var(--text-inverse) !important;
   }
-  
-  /* Accent background */
-  .bg-\[\#C5A059\] {
+
+  /* Accent Solid Backgrounds (Buttons, Pills, Badges) */
+  .bg-\[\#C5A059\],
+  .bg-\[\#c5a059\] {
     background-color: var(--accent-gold) !important;
     color: var(--text-inverse) !important;
   }
@@ -206,10 +253,10 @@ input[type="range"]::-webkit-slider-thumb {
     background-color: var(--accent-gold-subtle) !important;
   }
   .hover\:bg-\[\#C5A05922\]:hover {
-    background-color: rgba(142, 107, 35, 0.15) !important;
+    background-color: rgba(120, 83, 16, 0.16) !important;
   }
   .hover\:bg-\[\#C5A059\]:hover {
-    background-color: var(--accent-gold) !important;
+    background-color: var(--accent-gold-hover) !important;
     color: var(--text-inverse) !important;
   }
   
@@ -218,7 +265,7 @@ input[type="range"]::-webkit-slider-thumb {
     border-color: var(--accent-gold) !important;
   }
   .border-\[\#C5A05911\] {
-    border-color: rgba(142, 107, 35, 0.12) !important;
+    border-color: rgba(120, 83, 16, 0.16) !important;
   }
   .border-\[\#C5A05922\] {
     border-color: var(--border-subtle) !important;
@@ -236,9 +283,28 @@ input[type="range"]::-webkit-slider-thumb {
     border-color: var(--border-strong) !important;
   }
 
+  /* Elevate text with low opacity classes for crystal clear legibility */
+  span.opacity-40,
+  span.opacity-50,
+  span.opacity-60,
+  p.opacity-40,
+  p.opacity-50,
+  p.opacity-60,
+  div.opacity-40,
+  div.opacity-50,
+  div.opacity-60 {
+    opacity: 0.88 !important;
+  }
+
+  span.opacity-70,
+  p.opacity-70,
+  div.opacity-70 {
+    opacity: 0.95 !important;
+  }
+
   /* Ring / Shadows */
   .ring-\[\#C5A059\]\/40 {
-    --tw-ring-color: rgba(142, 107, 35, 0.4) !important;
+    --tw-ring-color: rgba(120, 83, 16, 0.45) !important;
   }
 
   /* Modal Backdrops */
