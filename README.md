@@ -1,4 +1,4 @@
-# Laboratório de Som — Evangelho das Dimenúveis
+# Evangelho das Dimenúveis - Laboratório de Som
 
 > Espaço acústico e laboratório de experimentação sonora para cultivo de presença consciente, meditação profunda e harmonia geométrica.
 
