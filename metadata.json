@@ -1,0 +1,6 @@
+{
+  "name": "Laboratório de Som — Evangelho das Dimenúveis",
+  "description": "Laboratório de som e experimentação acústica para contemplação, meditação e presença no universo do Evangelho das Dimenúveis.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
