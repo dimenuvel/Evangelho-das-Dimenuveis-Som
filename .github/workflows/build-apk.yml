@@ -2,9 +2,9 @@ name: Build React Web and Android APK
 
 on:
   push:
-    branches: [ "main", "master" ]
+    branches: ["main", "master"]
   pull_request:
-    branches: [ "main", "master" ]
+    branches: ["main", "master"]
   workflow_dispatch:
 
 env:
@@ -14,35 +14,48 @@ jobs:
   build-web:
     name: Build Production React App
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js (v22 LTS)
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "22"
+          cache: "npm"
 
-      - name: Install dependencies (clean & deterministic)
+      - name: Verify Node and npm
+        run: |
+          node --version
+          npm --version
+
+      - name: Install dependencies
         run: npm ci
 
-      - name: Run TypeScript type check
+      - name: Run TypeScript / lint check
         run: npm run lint
 
-      - name: Build production bundle (Vite)
+      - name: Build production bundle
         run: npm run build
 
-      - name: Verify dist directory creation
+      - name: Verify production build
         run: |
-          if [ ! -d "dist" ] || [ ! -f "dist/index.html" ]; then
-            echo "Error: dist directory or dist/index.html does not exist!"
+          if [ ! -d "dist" ]; then
+            echo "ERROR: dist directory was not created."
             exit 1
           fi
-          echo "Production build verified successfully:"
-          ls -la dist/
 
-      - name: Upload production web assets artifact
+          if [ ! -f "dist/index.html" ]; then
+            echo "ERROR: dist/index.html was not created."
+            exit 1
+          fi
+
+          echo "Production build verified successfully."
+          echo "Contents of dist/:"
+          find dist -maxdepth 2 -type f | sort
+
+      - name: Upload React production build
         uses: actions/upload-artifact@v4
         with:
           name: react-dist-build
@@ -53,52 +66,124 @@ jobs:
     name: Build Android APK
     needs: build-web
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Download React dist artifact
+      - name: Download React production build
         uses: actions/download-artifact@v4
         with:
           name: react-dist-build
           path: dist
 
+      - name: Verify downloaded React build
+        run: |
+          if [ ! -f "dist/index.html" ]; then
+            echo "ERROR: React production build was not downloaded correctly."
+            exit 1
+          fi
+
+          echo "React build ready for Android packaging."
+          ls -la dist/
+
       - name: Set up Java JDK 17
         uses: actions/setup-java@v5
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: Verify Java
+        run: |
+          java -version
+          javac -version
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Verify Android SDK
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+          sdkmanager --version
+
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
-          gradle-version: '8.7'
+          gradle-version: "8.7"
+          cache-disabled: true
 
-      - name: Copy React dist into Android assets
+      - name: Verify Gradle
+        run: |
+          gradle --version
+
+      - name: Copy React build into Android assets
         run: |
           mkdir -p android/app/src/main/assets/dist
+          rm -rf android/app/src/main/assets/dist/*
           cp -r dist/* android/app/src/main/assets/dist/
-          echo "Verified assets placed into android project:"
+
+          echo "React assets copied into Android project:"
           ls -la android/app/src/main/assets/dist/
 
-      - name: Build Android APK with Gradle
+      - name: Verify Android project
+        run: |
+          if [ ! -d "android" ]; then
+            echo "ERROR: android directory does not exist."
+            exit 1
+          fi
+
+          if [ ! -f "android/settings.gradle" ] && \
+             [ ! -f "android/settings.gradle.kts" ]; then
+            echo "ERROR: Android Gradle project configuration not found."
+            exit 1
+          fi
+
+          echo "Android project verified."
+
+      - name: Build Android Debug APK
         run: |
           cd android
-          gradle assembleDebug --no-daemon --stacktrace
+          gradle assembleDebug \
+            --no-daemon \
+            --no-build-cache \
+            --stacktrace
 
-      - name: Collect Generated APK
+      - name: Verify APK was generated
+        run: |
+          echo "Searching for generated APK files..."
+
+          find android/app/build/outputs/apk/ \
+            -type f \
+            -name "*.apk" \
+            -print
+
+          APK_COUNT=$(find android/app/build/outputs/apk/ \
+            -type f \
+            -name "*.apk" | wc -l)
+
+          if [ "$APK_COUNT" -eq 0 ]; then
+            echo "ERROR: No APK was generated."
+            exit 1
+          fi
+
+          echo "APK generation successful."
+
+      - name: Collect APK
         run: |
           mkdir -p output-apk
-          find android/app/build/outputs/apk/ -name "*.apk" -type f -exec cp {} output-apk/ \;
-          echo "Final APK artifacts collected:"
-          ls -la output-apk/
 
-      - name: Upload Android APK Artifact
+          find android/app/build/outputs/apk/ \
+            -type f \
+            -name "*.apk" \
+            -exec cp {} output-apk/ \;
+
+          echo "Final APK artifacts:"
+          ls -lh output-apk/
+
+      - name: Upload Android APK
         uses: actions/upload-artifact@v4
         with:
           name: dimenuveis-sound-lab-apk
-          path: output-apk/
+          path: output-apk/*.apk
           retention-days: 30
