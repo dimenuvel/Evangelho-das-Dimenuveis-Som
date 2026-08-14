@@ -63,11 +63,6 @@ jobs:
           name: react-dist-build
           path: dist
 
-      - name: Set up Node.js (v22 LTS)
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-
       - name: Set up Java JDK 17
         uses: actions/setup-java@v5
         with:
@@ -77,37 +72,33 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Package & Assemble Android APK
-        run: |
-          echo "Checking Android packaging configuration..."
-          if [ -f "./gradlew" ]; then
-            chmod +x ./gradlew
-            ./gradlew assembleRelease || ./gradlew assembleDebug
-          elif [ -d "android" ] && [ -f "android/gradlew" ]; then
-            cd android
-            chmod +x ./gradlew
-            ./gradlew assembleRelease || ./gradlew assembleDebug
-            cd ..
-          else
-            echo "Direct Gradle wrapper not in root; preparing web bundle for APK packaging pipeline."
-          fi
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.7'
 
-      - name: Locate and verify APK files
-        id: find-apk
+      - name: Copy React dist into Android assets
+        run: |
+          mkdir -p android/app/src/main/assets/dist
+          cp -r dist/* android/app/src/main/assets/dist/
+          echo "Verified assets placed into android project:"
+          ls -la android/app/src/main/assets/dist/
+
+      - name: Build Android APK with Gradle
+        run: |
+          cd android
+          gradle assembleDebug --no-daemon --stacktrace
+
+      - name: Collect Generated APK
         run: |
           mkdir -p output-apk
-          find . -name "*.apk" -type f -exec cp {} output-apk/ \;
-          if [ "$(ls -A output-apk)" ]; then
-            echo "Found APK files:"
-            ls -la output-apk/
-          else
-            echo "No generated APK in this step; packaging dist folder for downstream packaging worker."
-            tar -czf output-apk/dimenuveis-sound-lab-dist.tar.gz dist/
-          fi
+          find android/app/build/outputs/apk/ -name "*.apk" -type f -exec cp {} output-apk/ \;
+          echo "Final APK artifacts collected:"
+          ls -la output-apk/
 
-      - name: Upload APK / Distribution Artifacts
+      - name: Upload Android APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: dimenuveis-apk-package
+          name: dimenuveis-sound-lab-apk
           path: output-apk/
           retention-days: 30
