@@ -6,6 +6,7 @@
 [![React 19](https://img.shields.io/badge/Framework-React%2019-61dafb)](#tecnologias)
 [![TypeScript](https://img.shields.io/badge/Language-TypeScript%205-blue)](#tecnologias)
 [![Tailwind CSS](https://img.shields.io/badge/Styling-Tailwind%20CSS%204-38bdf8)](#tecnologias)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Site Oficial](https://img.shields.io/badge/Site-Evangelho%20das%20Dimenúveis-C5A059)](https://dimenuvel.github.io/Evangelho-das-Dimenuveis-site/)
 
 ---
@@ -137,5 +138,7 @@ Todo o áudio é sintetizado diretamente no navegador do usuário utilizando a *
 
 ## 📜 Licença & Direitos
 
-© **Evangelho das Dimenúveis** — Todos os direitos reservados.  
+Distribuído sob a licença **MIT**. Consulte o arquivo [`LICENSE`](LICENSE) para mais detalhes.
+
+© 2026 **Evangelho das Dimenúveis**  
 Visite o portal oficial: [https://dimenuvel.github.io/Evangelho-das-Dimenuveis-site/](https://dimenuvel.github.io/Evangelho-das-Dimenuveis-site/)
