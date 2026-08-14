@@ -13,6 +13,13 @@
 
 > 📱 **Aplicativo Android Disponível**: Baixe a versão para Android (APK v1) diretamente na aba de [Releases no GitHub](https://github.com/dimenuvel/Evangelho-das-Dimenuveis-Som/releases/tag/v1).
 
+## Destinos
+- Site: https://dimenuvel.github.io/Evangelho-das-Dimenuveis-site/
+- Aplicativo Online: https://dimenuveis.ai.studio/
+- Aplicativo Android (para instalar): https://github.com/dimenuvel/Evangelho-das-Dimenuveis
+- Laboratório de Som - https://github.com/dimenuvel/Evangelho-das-Dimenuveis-Som
+
+
 ---
 
 ## 🌌 Visão Geral
