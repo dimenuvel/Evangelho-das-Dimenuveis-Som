@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { VisualizerMode } from '../../types';
 import { AudioEngine } from '../../audio/AudioEngine';
 import { Sparkles, Maximize2, Minimize2, Eye, EyeOff, Circle, Compass, Activity } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
 
 interface SpiralVisualizerProps {
   mode: VisualizerMode;
@@ -18,6 +19,7 @@ export const SpiralVisualizer: React.FC<SpiralVisualizerProps> = ({
   activeBeatHz = 6.0,
   dimenuvelColor = '#d4af37',
 }) => {
+  const { isLight } = useTheme();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const animationFrameRef = useRef<number | null>(null);
@@ -95,9 +97,11 @@ export const SpiralVisualizer: React.FC<SpiralVisualizerProps> = ({
       ctx.save();
       ctx.scale(dpr, dpr);
 
-      // Deep dark warm background with slight fade trail for organic motion blur
-      ctx.fillStyle = 'rgba(18, 17, 16, 0.22)';
+      // Background with slight fade trail for organic motion blur (adapts to light/dark)
+      ctx.fillStyle = isLight ? 'rgba(250, 247, 242, 0.28)' : 'rgba(18, 17, 16, 0.22)';
       ctx.fillRect(0, 0, width, height);
+
+      const effectiveGold = isLight ? '#8E6B23' : (dimenuvelColor || '#C5A059');
 
       const centerX = width / 2;
       const centerY = height / 2;
@@ -144,9 +148,9 @@ export const SpiralVisualizer: React.FC<SpiralVisualizerProps> = ({
             ctx.lineTo(x, y);
           }
         }
-        ctx.strokeStyle = dimenuvelColor || '#d4af37';
-        ctx.lineWidth = 1.6;
-        ctx.globalAlpha = 0.4 + avgVolume * 0.6;
+        ctx.strokeStyle = effectiveGold;
+        ctx.lineWidth = isLight ? 1.9 : 1.6;
+        ctx.globalAlpha = isLight ? (0.55 + avgVolume * 0.45) : (0.4 + avgVolume * 0.6);
         ctx.stroke();
 
         // Spiral Node Beads (sacred points)
@@ -161,8 +165,8 @@ export const SpiralVisualizer: React.FC<SpiralVisualizerProps> = ({
 
           ctx.beginPath();
           ctx.arc(x, y, Math.max(1.5, nodeRadius), 0, Math.PI * 2);
-          ctx.fillStyle = i % 2 === 0 ? dimenuvelColor : '#f5f0e6';
-          ctx.globalAlpha = 0.5 + freqVal * 0.5;
+          ctx.fillStyle = i % 2 === 0 ? effectiveGold : (isLight ? '#382D20' : '#f5f0e6');
+          ctx.globalAlpha = 0.6 + freqVal * 0.4;
           ctx.fill();
         }
 
@@ -170,8 +174,8 @@ export const SpiralVisualizer: React.FC<SpiralVisualizerProps> = ({
         ctx.beginPath();
         const centerPulse = 5 + avgVolume * 15 + Math.sin(time * 2) * 2;
         ctx.arc(0, 0, centerPulse, 0, Math.PI * 2);
-        ctx.fillStyle = dimenuvelColor;
-        ctx.globalAlpha = 0.8;
+        ctx.fillStyle = effectiveGold;
+        ctx.globalAlpha = 0.85;
         ctx.fill();
 
         ctx.restore();
@@ -238,9 +242,9 @@ export const SpiralVisualizer: React.FC<SpiralVisualizerProps> = ({
           else ctx.lineTo(x, y);
         }
         ctx.closePath();
-        ctx.strokeStyle = dimenuvelColor;
-        ctx.lineWidth = 1.8;
-        ctx.globalAlpha = 0.7 + avgVolume * 0.3;
+        ctx.strokeStyle = effectiveGold;
+        ctx.lineWidth = isLight ? 2.0 : 1.8;
+        ctx.globalAlpha = 0.75 + avgVolume * 0.25;
         ctx.stroke();
 
         // Inverted mirror echo
@@ -254,9 +258,9 @@ export const SpiralVisualizer: React.FC<SpiralVisualizerProps> = ({
           else ctx.lineTo(x, y);
         }
         ctx.closePath();
-        ctx.strokeStyle = '#c4b5fd';
-        ctx.lineWidth = 1.0;
-        ctx.globalAlpha = 0.35;
+        ctx.strokeStyle = isLight ? '#6366F1' : '#c4b5fd';
+        ctx.lineWidth = isLight ? 1.4 : 1.0;
+        ctx.globalAlpha = isLight ? 0.5 : 0.35;
         ctx.stroke();
 
         ctx.restore();
@@ -268,9 +272,9 @@ export const SpiralVisualizer: React.FC<SpiralVisualizerProps> = ({
 
         // Draw 3 layered harmonic flowing waves
         const waveLayers = [
-          { color: dimenuvelColor, alpha: 0.7, heightScale: 50, speed: 2, yOffset: 0 },
-          { color: '#818cf8', alpha: 0.4, heightScale: 35, speed: -1.5, yOffset: 15 },
-          { color: '#38bdf8', alpha: 0.3, heightScale: 25, speed: 3, yOffset: -15 },
+          { color: effectiveGold, alpha: 0.8, heightScale: 50, speed: 2, yOffset: 0 },
+          { color: isLight ? '#4F46E5' : '#818cf8', alpha: 0.5, heightScale: 35, speed: -1.5, yOffset: 15 },
+          { color: isLight ? '#0284C7' : '#38bdf8', alpha: 0.4, heightScale: 25, speed: 3, yOffset: -15 },
         ];
 
         waveLayers.forEach((w) => {

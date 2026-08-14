@@ -9,9 +9,11 @@ import { LabMode } from './components/LabMode/LabMode';
 import { GuideModal } from './components/PhilosophicalGuide/GuideModal';
 import { PresetModal } from './components/PresetManager/PresetModal';
 import { SplashScreenTour } from './components/Tour/SplashScreenTour';
-import { AlertCircle, X } from 'lucide-react';
+import { ThemeProvider, useTheme } from './context/ThemeContext';
+import { AlertCircle, X, Sun, Moon } from 'lucide-react';
 
-export default function App() {
+function AppContent() {
+  const { theme, toggleTheme, isLight } = useTheme();
   const [currentMode, setCurrentMode] = useState<'simple' | 'lab'>('simple');
   const [visualizerMode, setVisualizerMode] = useState<VisualizerMode>('spiral');
   const [isGuideOpen, setIsGuideOpen] = useState<boolean>(false);
@@ -91,7 +93,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0F0E0D] text-[#D4CBBF] font-sans antialiased flex flex-col selection:bg-[#C5A05933] selection:text-[#C5A059] bg-geometric-radial relative">
+    <div className="min-h-screen bg-[#0F0E0D] text-[#D4CBBF] font-sans antialiased flex flex-col selection:bg-[#C5A05933] selection:text-[#C5A059] bg-geometric-radial relative transition-colors duration-200">
       
       {/* 1. Global Header */}
       <Header
@@ -193,6 +195,15 @@ export default function App() {
           </div>
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-[#C5A059]">
             <button
+              id="footer-theme-toggle-btn"
+              onClick={toggleTheme}
+              className="text-[#D4CBBF] opacity-70 hover:opacity-100 hover:text-[#C5A059] hover:underline tracking-widest transition-colors flex items-center gap-1"
+            >
+              {isLight ? <Moon className="w-3 h-3 text-[#C5A059]" /> : <Sun className="w-3 h-3 text-[#C5A059]" />}
+              <span>{isLight ? 'Modo Escuro' : 'Modo Claro'}</span>
+            </button>
+            <span>//</span>
+            <button
               id="footer-tour-btn"
               onClick={() => setIsTourOpen(true)}
               className="text-[#D4CBBF] opacity-70 hover:opacity-100 hover:text-[#C5A059] hover:underline tracking-widest transition-colors"
@@ -270,3 +281,12 @@ export default function App() {
     </div>
   );
 }
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
+  );
+}
+

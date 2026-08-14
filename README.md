@@ -1,4 +1,4 @@
-# Evangelho das Dimenúveis - Laboratório de Som
+# Laboratório de Som — Evangelho das Dimenúveis
 
 > Espaço acústico e laboratório de experimentação sonora para cultivo de presença consciente, meditação profunda e harmonia geométrica.
 
@@ -12,13 +12,6 @@
 [![Site Oficial](https://img.shields.io/badge/Site-Evangelho%20das%20Dimenúveis-C5A059)](https://dimenuvel.github.io/Evangelho-das-Dimenuveis-site/)
 
 > 📱 **Aplicativo Android Disponível**: Baixe a versão para Android (APK v1) diretamente na aba de [Releases no GitHub](https://github.com/dimenuvel/Evangelho-das-Dimenuveis-Som/releases/tag/v1).
-
-## Destinos Evangelho das Dimenúveis 
-- Site: https://dimenuvel.github.io/Evangelho-das-Dimenuveis-site/
-- Aplicativo Online: https://dimenuveis.ai.studio/
-- Aplicativo Android (para instalar): https://github.com/dimenuvel/Evangelho-das-Dimenuveis
-- Laboratório de Som - https://github.com/dimenuvel/Evangelho-das-Dimenuveis-Som
-
 
 ---
 

@@ -1,12 +1,13 @@
 import React from 'react';
-import { Play, Pause, Square, Headphones, Volume2, Sliders, Sparkles, BookOpen } from 'lucide-react';
+import { Play, Pause, Headphones, Volume2, Sliders, Sparkles, BookOpen, Sun, Moon } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 
 interface HeaderProps {
   currentMode: 'simple' | 'lab';
   onModeChange: (mode: 'simple' | 'lab') => void;
   isPlaying: boolean;
   onTogglePlay: () => void;
-  onStop: () => void;
+  onStop?: () => void;
   masterVolume: number;
   onMasterVolumeChange: (vol: number) => void;
   onOpenGuide: () => void;
@@ -17,11 +18,12 @@ export const Header: React.FC<HeaderProps> = ({
   onModeChange,
   isPlaying,
   onTogglePlay,
-  onStop,
   masterVolume,
   onMasterVolumeChange,
   onOpenGuide,
 }) => {
+  const { theme, toggleTheme, isLight } = useTheme();
+
   return (
     <header id="main-app-header" className="w-full bg-[#0F0E0DCC] backdrop-blur-md border-b border-[#C5A05933] sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-8 py-3.5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -44,19 +46,31 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           </div>
 
-          {/* Guide button on mobile */}
-          <button
-            id="mobile-guide-btn"
-            onClick={onOpenGuide}
-            title="Conceitos & Avisos"
-            className="md:hidden p-2 rounded-full border border-[#C5A05944] text-[#C5A059] hover:bg-[#C5A05911] transition-colors"
-          >
-            <BookOpen className="w-4 h-4" />
-          </button>
+          {/* Quick buttons on mobile (Theme + Guide) */}
+          <div className="flex items-center gap-2 md:hidden">
+            <button
+              id="mobile-theme-toggle-btn"
+              onClick={toggleTheme}
+              title={isLight ? 'Modo Escuro (Trevas)' : 'Modo Claro (Luz Sacra)'}
+              aria-label="Alternar tema"
+              className="p-2 rounded-full border border-[#C5A05944] text-[#C5A059] hover:bg-[#C5A05911] transition-colors"
+            >
+              {isLight ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+            </button>
+
+            <button
+              id="mobile-guide-btn"
+              onClick={onOpenGuide}
+              title="Conceitos & Avisos"
+              className="p-2 rounded-full border border-[#C5A05944] text-[#C5A059] hover:bg-[#C5A05911] transition-colors"
+            >
+              <BookOpen className="w-4 h-4" />
+            </button>
+          </div>
         </div>
 
         {/* Center & Right Controls */}
-        <div className="flex flex-wrap items-center justify-between md:justify-end gap-4 sm:gap-6">
+        <div className="flex flex-wrap items-center justify-between md:justify-end gap-3 sm:gap-5">
           
           {/* Session State Indicator */}
           <div className="hidden lg:flex flex-col items-end">
@@ -98,7 +112,7 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="h-6 sm:h-8 w-px bg-[#C5A05933]"></div>
 
           {/* Master Volume & Playback Controls */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5 sm:gap-3">
             {/* Master Volume Slider */}
             <div className="flex items-center gap-2 bg-[#1A1614] px-3 py-1.5 border border-[#C5A05933]">
               <Volume2 className="w-3.5 h-3.5 text-[#C5A059]" />
@@ -118,36 +132,44 @@ export const Header: React.FC<HeaderProps> = ({
               </span>
             </div>
 
-            {/* Circular Play / Stop Controls */}
-            <div className="flex items-center gap-1.5">
-              <button
-                id="header-play-pause-btn"
-                onClick={onTogglePlay}
-                title={isPlaying ? 'Pausar Áudio' : 'Iniciar Áudio'}
-                className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
-                  isPlaying
-                    ? 'border border-[#C5A059] text-[#C5A059] hover:bg-[#C5A05922]'
-                    : 'bg-[#C5A059] text-[#0F0E0D] hover:bg-[#d6b26a]'
-                }`}
-              >
-                {isPlaying ? (
-                  <Pause className="w-4 h-4 fill-current" />
-                ) : (
-                  <Play className="w-4 h-4 fill-current translate-x-0.5" />
-                )}
-              </button>
-
-              {isPlaying && (
-                <button
-                  id="header-stop-btn"
-                  onClick={onStop}
-                  title="Parar áudio"
-                  className="w-9 h-9 rounded-full border border-[#C5A05944] text-[#C5A059] hover:bg-[#C5A05922] flex items-center justify-center transition-colors"
-                >
-                  <Square className="w-3.5 h-3.5" />
-                </button>
+            {/* Play / Pause Control */}
+            <button
+              id="header-play-pause-btn"
+              onClick={onTogglePlay}
+              title={isPlaying ? 'Pausar Áudio' : 'Iniciar Áudio'}
+              className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
+                isPlaying
+                  ? 'border border-[#C5A059] text-[#C5A059] hover:bg-[#C5A05922]'
+                  : 'bg-[#C5A059] text-[#0F0E0D] hover:bg-[#d6b26a]'
+              }`}
+            >
+              {isPlaying ? (
+                <Pause className="w-4 h-4 fill-current" />
+              ) : (
+                <Play className="w-4 h-4 fill-current translate-x-0.5" />
               )}
-            </div>
+            </button>
+
+            {/* Theme Toggle Button Desktop */}
+            <button
+              id="desktop-theme-toggle-btn"
+              onClick={toggleTheme}
+              title={isLight ? 'Modo Escuro (Trevas)' : 'Modo Claro (Luz Sacra)'}
+              aria-label="Alternar tema claro/escuro"
+              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 border border-[#C5A05944] hover:bg-[#C5A05911] text-[#C5A059] text-xs uppercase tracking-widest transition-colors"
+            >
+              {isLight ? (
+                <>
+                  <Moon className="w-3.5 h-3.5" />
+                  <span className="hidden lg:inline text-[10px]">Escuro</span>
+                </>
+              ) : (
+                <>
+                  <Sun className="w-3.5 h-3.5" />
+                  <span className="hidden lg:inline text-[10px]">Claro</span>
+                </>
+              )}
+            </button>
 
             {/* Guide info button desktop */}
             <button
@@ -175,3 +197,4 @@ export const Header: React.FC<HeaderProps> = ({
     </header>
   );
 };
+
