@@ -2,12 +2,16 @@
 
 > Espaço acústico e laboratório de experimentação sonora para cultivo de presença consciente, meditação profunda e harmonia geométrica.
 
+[![Android App](https://img.shields.io/badge/Download-Android%20APK%20(v1)-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/dimenuvel/Evangelho-das-Dimenuveis-Som/releases/tag/v1)
+
 [![Web Audio API](https://img.shields.io/badge/Audio-Web%20Audio%20API-goldenrod)](#arquitetura-do-motor-de-áudio)
 [![React 19](https://img.shields.io/badge/Framework-React%2019-61dafb)](#tecnologias)
 [![TypeScript](https://img.shields.io/badge/Language-TypeScript%205-blue)](#tecnologias)
 [![Tailwind CSS](https://img.shields.io/badge/Styling-Tailwind%20CSS%204-38bdf8)](#tecnologias)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Site Oficial](https://img.shields.io/badge/Site-Evangelho%20das%20Dimenúveis-C5A059)](https://dimenuvel.github.io/Evangelho-das-Dimenuveis-site/)
+
+> 📱 **Aplicativo Android Disponível**: Baixe a versão para Android (APK v1) diretamente na aba de [Releases no GitHub](https://github.com/dimenuvel/Evangelho-das-Dimenuveis-Som/releases/tag/v1).
 
 ---
 
