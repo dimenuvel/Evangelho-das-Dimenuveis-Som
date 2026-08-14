@@ -100,8 +100,8 @@ Todo o áudio é sintetizado diretamente no navegador do usuário utilizando a *
 
 1. **Clone o repositório:**
    ```bash
-   git clone https://github.com/dimenuvel/Evangelho-das-Dimenuveis-site.git
-   cd Evangelho-das-Dimenuveis-site
+   git clone https://github.com/dimenuvel/Evangelho-das-Dimenuveis-Som.git
+   cd Evangelho-das-Dimenuveis-Som
    ```
 
 2. **Instale as dependências:**
