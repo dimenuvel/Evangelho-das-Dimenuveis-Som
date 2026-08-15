@@ -2,7 +2,7 @@
 
 > Espaço acústico e laboratório de experimentação sonora para cultivo de presença consciente, meditação profunda e harmonia geométrica.
 
-[![Android App](https://img.shields.io/badge/Download-Android%20APK%20(v1)-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/dimenuvel/Evangelho-das-Dimenuveis-Som/releases/tag/v1)
+[![Android App](https://img.shields.io/badge/Download-Android%20APK%20(v1)-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/dimenuvel/Evangelho-das-Dimenuveis-Som/releases/)
 
 [![Web Audio API](https://img.shields.io/badge/Audio-Web%20Audio%20API-goldenrod)](#arquitetura-do-motor-de-áudio)
 [![React 19](https://img.shields.io/badge/Framework-React%2019-61dafb)](#tecnologias)
