@@ -99,13 +99,19 @@ jobs:
       - name: Collect Generated APK
         run: |
           mkdir -p output-apk
-          find android/app/build/outputs/apk/ -name "*.apk" -type f -exec cp {} output-apk/ \;
-          echo "Final APK artifacts collected:"
+          APK_FILE=$(find android/app/build/outputs/apk/ -name "*.apk" -type f | head -n 1)
+          if [ -n "$APK_FILE" ]; then
+            cp "$APK_FILE" output-apk/Laboratorio-de-Som-Diminuveis.apk
+          else
+            echo "Error: No APK file found in android/app/build/outputs/apk/"
+            exit 1
+          fi
+          echo "Final APK artifact collected:"
           ls -la output-apk/
 
       - name: Upload Android APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: dimenuveis-sound-lab-apk
-          path: output-apk/
+          name: Laboratorio-de-Som-Diminuveis
+          path: output-apk/Laboratorio-de-Som-Diminuveis.apk
           retention-days: 30
