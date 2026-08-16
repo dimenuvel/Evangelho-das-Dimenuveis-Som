@@ -69,8 +69,8 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Center & Right Controls */}
-        <div className="flex flex-wrap items-center justify-between md:justify-end gap-3 sm:gap-5">
+        {/* Center & Right Controls - Single Aligned Row on Mobile & Desktop */}
+        <div className="flex items-center justify-between md:justify-end gap-2 sm:gap-4 w-full md:w-auto flex-nowrap">
           
           {/* Session State Indicator */}
           <div className="hidden lg:flex flex-col items-end">
@@ -83,11 +83,11 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="hidden lg:block h-8 w-px bg-[#C5A05933]"></div>
 
           {/* Mode Switcher Buttons */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <button
               id="mode-switch-simple-btn"
               onClick={() => onModeChange('simple')}
-              className={`px-4 py-1.5 text-xs uppercase tracking-widest transition-all font-medium ${
+              className={`px-2.5 sm:px-4 py-1 sm:py-1.5 text-[11px] sm:text-xs uppercase tracking-wider sm:tracking-widest transition-all font-medium whitespace-nowrap ${
                 currentMode === 'simple'
                   ? 'bg-[#C5A059] text-[#0F0E0D] font-bold shadow-sm'
                   : 'border border-[#C5A059] text-[#C5A059] hover:bg-[#C5A05911]'
@@ -99,7 +99,7 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               id="mode-switch-lab-btn"
               onClick={() => onModeChange('lab')}
-              className={`px-4 py-1.5 text-xs uppercase tracking-widest transition-all font-medium ${
+              className={`px-2.5 sm:px-4 py-1 sm:py-1.5 text-[11px] sm:text-xs uppercase tracking-wider sm:tracking-widest transition-all font-medium whitespace-nowrap ${
                 currentMode === 'lab'
                   ? 'bg-[#C5A059] text-[#0F0E0D] font-bold shadow-sm'
                   : 'border border-[#C5A059] text-[#C5A059] hover:bg-[#C5A05911]'
@@ -109,13 +109,11 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
           </div>
 
-          <div className="h-6 sm:h-8 w-px bg-[#C5A05933]"></div>
-
           {/* Master Volume & Playback Controls */}
-          <div className="flex items-center gap-2.5 sm:gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
             {/* Master Volume Slider */}
-            <div className="flex items-center gap-2 bg-[#1A1614] px-3 py-1.5 border border-[#C5A05933]">
-              <Volume2 className="w-3.5 h-3.5 text-[#C5A059]" />
+            <div className="flex items-center gap-1.5 sm:gap-2 bg-[#1A1614] px-2 sm:px-3 py-1 sm:py-1.5 border border-[#C5A05933] shrink-0">
+              <Volume2 className="w-3.5 h-3.5 text-[#C5A059] shrink-0" />
               <input
                 id="master-volume-header-slider"
                 type="range"
@@ -125,9 +123,9 @@ export const Header: React.FC<HeaderProps> = ({
                 value={masterVolume}
                 onChange={(e) => onMasterVolumeChange(parseFloat(e.target.value))}
                 aria-label="Volume Geral Master"
-                className="w-16 sm:w-20 accent-[#C5A059] cursor-pointer"
+                className="w-14 sm:w-20 accent-[#C5A059] cursor-pointer"
               />
-              <span className="text-[10px] font-mono text-[#C5A059] w-7 text-right">
+              <span className="text-[9px] sm:text-[10px] font-mono text-[#C5A059] w-6 sm:w-7 text-right shrink-0">
                 {Math.round(masterVolume * 100)}%
               </span>
             </div>
@@ -137,16 +135,16 @@ export const Header: React.FC<HeaderProps> = ({
               id="header-play-pause-btn"
               onClick={onTogglePlay}
               title={isPlaying ? 'Pausar Áudio' : 'Iniciar Áudio'}
-              className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
+              className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center shrink-0 transition-all ${
                 isPlaying
                   ? 'border border-[#C5A059] text-[#C5A059] hover:bg-[#C5A05922]'
                   : 'bg-[#C5A059] text-[#0F0E0D] hover:bg-[#d6b26a]'
               }`}
             >
               {isPlaying ? (
-                <Pause className="w-4 h-4 fill-current" />
+                <Pause className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current" />
               ) : (
-                <Play className="w-4 h-4 fill-current translate-x-0.5" />
+                <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current translate-x-0.5" />
               )}
             </button>
 
@@ -156,7 +154,7 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={toggleTheme}
               title={isLight ? 'Modo Escuro (Trevas)' : 'Modo Claro (Luz Sacra)'}
               aria-label="Alternar tema claro/escuro"
-              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 border border-[#C5A05944] hover:bg-[#C5A05911] text-[#C5A059] text-xs uppercase tracking-widest transition-colors"
+              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 border border-[#C5A05944] hover:bg-[#C5A05911] text-[#C5A059] text-xs uppercase tracking-widest transition-colors shrink-0"
             >
               {isLight ? (
                 <>
@@ -176,7 +174,7 @@ export const Header: React.FC<HeaderProps> = ({
               id="desktop-guide-btn"
               onClick={onOpenGuide}
               title="Conceitos & Avisos Legais"
-              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 border border-[#C5A05944] hover:bg-[#C5A05911] text-[#C5A059] text-xs uppercase tracking-widest transition-colors"
+              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 border border-[#C5A05944] hover:bg-[#C5A05911] text-[#C5A059] text-xs uppercase tracking-widest transition-colors shrink-0"
             >
               <BookOpen className="w-3.5 h-3.5" />
               <span>Guia</span>
