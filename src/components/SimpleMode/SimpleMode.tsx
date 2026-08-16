@@ -187,22 +187,26 @@ export const SimpleMode: React.FC<SimpleModeProps> = ({
         
         {/* Top: Active Dimenúvel Identity */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#C5A05922] pb-6">
-          <div className="space-y-1.5">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 flex items-center justify-center border border-[#C5A059] rounded-full text-[#C5A059] font-serif text-sm">
+          <div className="space-y-2 min-w-0 flex-1">
+            <div className="flex items-center gap-3 flex-wrap">
+              <div className="w-8 h-8 flex items-center justify-center border border-[#C5A059] rounded-full text-[#C5A059] font-serif text-sm shrink-0">
                 {activeDimenuvel.symbol}
               </div>
-              <div>
-                <span className="text-[10px] uppercase tracking-[0.25em] text-[#C5A059] opacity-80">
-                  Dimenúvel {activeDimenuvel.id} • {activeDimenuvel.subtitle}
+              <div className="min-w-0">
+                <span className="text-[10px] uppercase tracking-[0.25em] text-[#C5A059] opacity-80 block">
+                  {currentPreset.category === 'canonical' && currentPreset.dimenuvelId
+                    ? `Dimenúvel ${activeDimenuvel.id} • ${activeDimenuvel.subtitle}`
+                    : currentPreset.category === 'contemplative'
+                    ? 'Padrão Contemplativo Especial'
+                    : 'Predefinição Personalizada'}
                 </span>
                 <h3 className="text-xl sm:text-2xl font-serif italic text-[#C5A059] tracking-wide leading-tight">
                   {currentPreset.name}
                 </h3>
               </div>
             </div>
-            <p className="text-xs text-[#D4CBBF]/75 leading-relaxed max-w-xl">
-              {activeDimenuvel.description}
+            <p className="text-xs sm:text-sm text-[#D4CBBF]/85 leading-relaxed max-w-2xl">
+              {currentPreset.description || activeDimenuvel.description}
             </p>
           </div>
 

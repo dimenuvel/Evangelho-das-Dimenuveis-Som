@@ -101,7 +101,7 @@ export const PresetModal: React.FC<PresetModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
       <div
         id="preset-manager-modal"
-        className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto bg-[#141210] border border-[#C5A059] p-6 sm:p-8 text-[#D4CBBF] shadow-2xl space-y-6"
+        className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-[#141210] border border-[#C5A059] p-6 sm:p-8 text-[#D4CBBF] shadow-2xl space-y-6"
       >
         {/* Close Button */}
         <button
@@ -194,131 +194,205 @@ export const PresetModal: React.FC<PresetModalProps> = ({
 
         {/* 1. Custom User Presets Section */}
         {customPresets.length > 0 && (
-          <div className="space-y-2">
-            <span className="text-[10px] uppercase tracking-[0.2em] text-[#C5A059] font-serif">
+          <div className="space-y-2.5">
+            <span className="text-[10px] uppercase tracking-[0.2em] text-[#C5A059] font-serif font-bold">
               Minhas Predefinições ({customPresets.length})
             </span>
-            <div className="space-y-2">
-              {customPresets.map((preset) => (
-                <div
-                  key={preset.id}
-                  className="p-3.5 bg-[#1A1614] border border-[#C5A05922] hover:border-[#C5A059] flex items-center justify-between gap-3 transition-colors"
-                >
-                  <div className="space-y-0.5 min-w-0">
-                    {editingId === preset.id ? (
-                      <div className="flex items-center gap-1">
-                        <input
-                          type="text"
-                          value={editName}
-                          onChange={(e) => setEditName(e.target.value)}
-                          onKeyDown={(e) => e.key === 'Enter' && handleRename(preset.id)}
-                          autoFocus
-                          className="bg-[#0F0E0D] text-xs font-serif italic text-[#C5A059] px-2 py-0.5 border border-[#C5A059] outline-none"
-                        />
-                        <button onClick={() => handleRename(preset.id)} className="text-[#C5A059] p-1">
-                          <Check className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <h4 className="text-xs font-serif italic text-[#C5A059] truncate">
-                          {preset.name}
-                        </h4>
-                        <button
-                          onClick={() => {
-                            setEditingId(preset.id);
-                            setEditName(preset.name);
-                          }}
-                          className="text-[#D4CBBF]/40 hover:text-[#C5A059]"
-                        >
-                          <Edit2 className="w-3 h-3" />
-                        </button>
-                      </div>
-                    )}
-                    <p className="text-[11px] text-[#D4CBBF]/70 truncate">
-                      {preset.description} • {preset.layers.length} camadas
-                    </p>
-                  </div>
+            <div className="space-y-2.5">
+              {customPresets.map((preset) => {
+                const isActive = currentPresetId === preset.id;
+                return (
+                  <div
+                    key={preset.id}
+                    className={`p-4 bg-[#1A1614] border transition-all flex flex-col sm:flex-row sm:items-start justify-between gap-3 ${
+                      isActive
+                        ? 'border-[#C5A059] shadow-md shadow-[#C5A059]/10 bg-[#1F1B18]'
+                        : 'border-[#C5A05922] hover:border-[#C5A05966]'
+                    }`}
+                  >
+                    <div className="space-y-1.5 min-w-0 flex-1">
+                      {editingId === preset.id ? (
+                        <div className="flex items-center gap-1">
+                          <input
+                            type="text"
+                            value={editName}
+                            onChange={(e) => setEditName(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleRename(preset.id)}
+                            autoFocus
+                            className="bg-[#0F0E0D] text-xs font-serif italic text-[#C5A059] px-2 py-1 border border-[#C5A059] outline-none w-full max-w-xs"
+                          />
+                          <button onClick={() => handleRename(preset.id)} className="text-[#C5A059] p-1 shrink-0">
+                            <Check className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h4 className="text-sm font-serif italic text-[#C5A059] font-bold">
+                            {preset.name}
+                          </h4>
+                          <span className="text-[10px] font-mono bg-[#0F0E0D] px-2 py-0.5 border border-[#C5A05933] text-[#D4CBBF]/70">
+                            {preset.layers.length} camadas
+                          </span>
+                          {isActive && (
+                            <span className="text-[9px] font-mono uppercase tracking-widest text-[#0F0E0D] bg-[#C5A059] px-1.5 py-0.5 font-bold">
+                              Ativo
+                            </span>
+                          )}
+                          <button
+                            onClick={() => {
+                              setEditingId(preset.id);
+                              setEditName(preset.name);
+                            }}
+                            className="text-[#D4CBBF]/40 hover:text-[#C5A059] transition-colors p-0.5"
+                            title="Renomear"
+                          >
+                            <Edit2 className="w-3 h-3" />
+                          </button>
+                        </div>
+                      )}
+                      {preset.description && (
+                        <p className="text-xs text-[#D4CBBF]/85 leading-relaxed break-words whitespace-normal">
+                          {preset.description}
+                        </p>
+                      )}
+                    </div>
 
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    <button
-                      onClick={() => {
-                        onLoadPreset(preset);
-                        onClose();
-                      }}
-                      className="px-3.5 py-1.5 border border-[#C5A059] text-[#C5A059] hover:bg-[#C5A059] hover:text-[#0F0E0D] text-[10px] uppercase tracking-widest font-bold transition-colors"
-                    >
-                      Carregar
-                    </button>
-                    <button
-                      onClick={() => onDeletePreset(preset.id)}
-                      className="p-1.5 border border-red-900/40 text-red-400 hover:bg-red-950/60 transition-colors"
-                      title="Excluir predefinição"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
+                    <div className="flex items-center gap-2 shrink-0 self-end sm:self-start pt-1">
+                      <button
+                        onClick={() => {
+                          onLoadPreset(preset);
+                          onClose();
+                        }}
+                        className={`px-4 py-1.5 text-[10px] uppercase tracking-widest font-bold transition-colors ${
+                          isActive
+                            ? 'bg-[#C5A059] text-[#0F0E0D] font-bold'
+                            : 'border border-[#C5A059] text-[#C5A059] hover:bg-[#C5A059] hover:text-[#0F0E0D]'
+                        }`}
+                      >
+                        {isActive ? 'Recarregar' : 'Carregar'}
+                      </button>
+                      <button
+                        onClick={() => onDeletePreset(preset.id)}
+                        className="p-1.5 border border-red-900/40 text-red-400 hover:bg-red-950/60 transition-colors"
+                        title="Excluir predefinição"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
 
         {/* 2. Canonical Seven Dimenúveis */}
-        <div className="space-y-2">
-          <span className="text-[10px] uppercase tracking-[0.2em] text-[#C5A059] font-serif">
+        <div className="space-y-2.5">
+          <span className="text-[10px] uppercase tracking-[0.2em] text-[#C5A059] font-serif font-bold">
             As Sete Dimenúveis Canônicas
           </span>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {canonicalPresets.map((preset) => (
-              <div
-                key={preset.id}
-                className="p-3 bg-[#1A1614] border border-[#C5A05922] hover:border-[#C5A059] flex items-center justify-between gap-2 transition-colors"
-              >
-                <div className="space-y-0.5 min-w-0 text-xs">
-                  <h4 className="font-serif italic text-[#C5A059] truncate">{preset.name}</h4>
-                  <p className="text-[10px] text-[#D4CBBF]/70 line-clamp-1">{preset.description}</p>
-                </div>
-                <button
-                  onClick={() => {
-                    onLoadPreset(preset);
-                    onClose();
-                  }}
-                  className="px-3 py-1 bg-[#0F0E0D] border border-[#C5A05944] hover:bg-[#C5A059] hover:text-[#0F0E0D] text-[#C5A059] text-[10px] uppercase tracking-widest font-bold shrink-0 transition-colors"
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {canonicalPresets.map((preset) => {
+              const isActive = currentPresetId === preset.id;
+              return (
+                <div
+                  key={preset.id}
+                  className={`p-4 bg-[#1A1614] border transition-all flex flex-col justify-between gap-3 ${
+                    isActive
+                      ? 'border-[#C5A059] shadow-md shadow-[#C5A059]/10 bg-[#1F1B18]'
+                      : 'border-[#C5A05922] hover:border-[#C5A05966] hover:bg-[#181513]'
+                  }`}
                 >
-                  Carregar
-                </button>
-              </div>
-            ))}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <h4 className="font-serif italic text-sm text-[#C5A059] font-semibold">
+                        {preset.name}
+                      </h4>
+                      {isActive && (
+                        <span className="text-[9px] font-mono uppercase tracking-widest text-[#0F0E0D] bg-[#C5A059] px-1.5 py-0.5 font-bold shrink-0">
+                          Ativo
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-[#D4CBBF]/85 leading-relaxed break-words whitespace-normal">
+                      {preset.description}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-2.5 border-t border-[#C5A05915] text-[10px] font-mono text-[#D4CBBF]/60">
+                    <span>{preset.layers.length} camadas sonoras</span>
+                    <button
+                      onClick={() => {
+                        onLoadPreset(preset);
+                        onClose();
+                      }}
+                      className={`px-3.5 py-1 text-[10px] uppercase tracking-widest font-bold shrink-0 transition-colors ${
+                        isActive
+                          ? 'bg-[#C5A059] text-[#0F0E0D]'
+                          : 'bg-[#0F0E0D] border border-[#C5A05944] text-[#C5A059] hover:bg-[#C5A059] hover:text-[#0F0E0D]'
+                      }`}
+                    >
+                      {isActive ? 'Recarregar' : 'Carregar'}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
         {/* 3. Contemplative Soundscapes */}
-        <div className="space-y-2">
-          <span className="text-[10px] uppercase tracking-[0.2em] text-[#C5A059] font-serif">
+        <div className="space-y-2.5">
+          <span className="text-[10px] uppercase tracking-[0.2em] text-[#C5A059] font-serif font-bold">
             Padrões Contemplativos Especiais
           </span>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {contemplativePresets.map((preset) => (
-              <div
-                key={preset.id}
-                className="p-3 bg-[#1A1614] border border-[#C5A05922] hover:border-[#C5A059] flex items-center justify-between gap-2 transition-colors"
-              >
-                <div className="space-y-0.5 min-w-0 text-xs">
-                  <h4 className="font-serif italic text-[#C5A059] truncate">{preset.name}</h4>
-                  <p className="text-[10px] text-[#D4CBBF]/70 line-clamp-1">{preset.description}</p>
-                </div>
-                <button
-                  onClick={() => {
-                    onLoadPreset(preset);
-                    onClose();
-                  }}
-                  className="px-3 py-1 bg-[#0F0E0D] border border-[#C5A05944] hover:bg-[#C5A059] hover:text-[#0F0E0D] text-[#C5A059] text-[10px] uppercase tracking-widest font-bold shrink-0 transition-colors"
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {contemplativePresets.map((preset) => {
+              const isActive = currentPresetId === preset.id;
+              return (
+                <div
+                  key={preset.id}
+                  className={`p-4 bg-[#1A1614] border transition-all flex flex-col justify-between gap-3 ${
+                    isActive
+                      ? 'border-[#C5A059] shadow-md shadow-[#C5A059]/10 bg-[#1F1B18]'
+                      : 'border-[#C5A05922] hover:border-[#C5A05966] hover:bg-[#181513]'
+                  }`}
                 >
-                  Carregar
-                </button>
-              </div>
-            ))}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <h4 className="font-serif italic text-sm text-[#C5A059] font-semibold">
+                        {preset.name}
+                      </h4>
+                      {isActive && (
+                        <span className="text-[9px] font-mono uppercase tracking-widest text-[#0F0E0D] bg-[#C5A059] px-1.5 py-0.5 font-bold shrink-0">
+                          Ativo
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-[#D4CBBF]/85 leading-relaxed break-words whitespace-normal">
+                      {preset.description}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-2.5 border-t border-[#C5A05915] text-[10px] font-mono text-[#D4CBBF]/60">
+                    <span>{preset.layers.length} camadas sonoras</span>
+                    <button
+                      onClick={() => {
+                        onLoadPreset(preset);
+                        onClose();
+                      }}
+                      className={`px-3.5 py-1 text-[10px] uppercase tracking-widest font-bold shrink-0 transition-colors ${
+                        isActive
+                          ? 'bg-[#C5A059] text-[#0F0E0D]'
+                          : 'bg-[#0F0E0D] border border-[#C5A05944] text-[#C5A059] hover:bg-[#C5A059] hover:text-[#0F0E0D]'
+                      }`}
+                    >
+                      {isActive ? 'Recarregar' : 'Carregar'}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 

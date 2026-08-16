@@ -127,16 +127,21 @@ export const LabMode: React.FC<LabModeProps> = ({
       <div className="bg-[#141210] border border-[#C5A05933] p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xl">
         
         {/* Left: Active Preset & Summary */}
-        <div className="space-y-1 min-w-0 flex-1">
-          <div className="flex items-center gap-3 min-w-0">
+        <div className="space-y-1.5 min-w-0 flex-1">
+          <div className="flex items-center gap-3 min-w-0 flex-wrap">
             <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#C5A059] border border-[#C5A05944] bg-[#1A1614] px-2.5 py-0.5 shrink-0">
               LABORATÓRIO
             </span>
-            <h3 className="text-base font-serif italic text-[#C5A059] tracking-wide truncate">
+            <h3 className="text-base font-serif italic text-[#C5A059] tracking-wide">
               {currentPreset.name}
             </h3>
           </div>
-          <p className="text-[11px] font-mono text-[#D4CBBF] opacity-70 truncate">
+          {currentPreset.description && (
+            <p className="text-xs text-[#D4CBBF]/85 leading-relaxed max-w-2xl">
+              {currentPreset.description}
+            </p>
+          )}
+          <p className="text-[11px] font-mono text-[#D4CBBF] opacity-70">
             {activeLayersCount} de {layers.length} camadas ativas // {beatDiff > 0 ? `Batimento: ${beatDiff.toFixed(1)} Hz (${beatInfo.rhythmBand})` : 'Modo Uníssono'}
           </p>
         </div>
