@@ -64,8 +64,8 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        // Load the local bundled React app (dist folder in Android assets)
-        webView.loadUrl("https://appassets.androidplatform.net/assets/dist/index.html")
+        // Load the local bundled React app (dist files in Android assets)
+        webView.loadUrl("https://appassets.androidplatform.net/assets/index.html")
     }
 
     override fun onDestroy() {
