@@ -1,6 +1,8 @@
 package com.dimenuveis.soundlab
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
@@ -51,6 +53,45 @@ class MainActivity : AppCompatActivity() {
                 request: WebResourceRequest
             ): WebResourceResponse? {
                 return assetLoader.shouldInterceptRequest(request.url)
+            }
+
+            override fun shouldOverrideUrlLoading(
+                view: WebView,
+                request: WebResourceRequest
+            ): Boolean {
+                val uri = request.url
+                val host = uri.host
+                // If it's the internal local bundled app asset, let WebView handle it
+                if (host != null && host.equals("appassets.androidplatform.net", ignoreCase = true)) {
+                    return false
+                }
+                // External links (e.g. website, docs) open in default external browser
+                return try {
+                    val intent = Intent(Intent.ACTION_VIEW, uri)
+                    startActivity(intent)
+                    true
+                } catch (e: Exception) {
+                    false
+                }
+            }
+
+            @Suppress("DEPRECATION")
+            override fun shouldOverrideUrlLoading(
+                view: WebView,
+                url: String
+            ): Boolean {
+                val uri = Uri.parse(url)
+                val host = uri.host
+                if (host != null && host.equals("appassets.androidplatform.net", ignoreCase = true)) {
+                    return false
+                }
+                return try {
+                    val intent = Intent(Intent.ACTION_VIEW, uri)
+                    startActivity(intent)
+                    true
+                } catch (e: Exception) {
+                    false
+                }
             }
         }
 

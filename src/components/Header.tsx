@@ -69,27 +69,27 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Center & Right Controls - Single Aligned Row on Mobile & Desktop */}
-        <div className="flex items-center justify-between md:justify-end gap-2 sm:gap-4 w-full md:w-auto flex-nowrap">
+        {/* Center & Right Controls - Single Aligned Row Filling Full Width on Mobile & Flex on Desktop */}
+        <div className="flex items-center justify-between gap-2 sm:gap-3 w-full md:w-auto flex-nowrap">
           
           {/* Session State Indicator */}
-          <div className="hidden lg:flex flex-col items-end">
+          <div className="hidden xl:flex flex-col items-end shrink-0">
             <span className="text-[10px] uppercase tracking-widest opacity-40">Estado de Sessão</span>
             <span className="text-xs font-mono text-[#C5A059] font-medium tracking-wider">
               {isPlaying ? 'PRESENÇA ATIVA' : 'EM REPOUSO'}
             </span>
           </div>
 
-          <div className="hidden lg:block h-8 w-px bg-[#C5A05933]"></div>
+          <div className="hidden xl:block h-8 w-px bg-[#C5A05933]"></div>
 
           {/* Mode Switcher Buttons */}
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <button
               id="mode-switch-simple-btn"
               onClick={() => onModeChange('simple')}
-              className={`px-2.5 sm:px-4 py-1 sm:py-1.5 text-[11px] sm:text-xs uppercase tracking-wider sm:tracking-widest transition-all font-medium whitespace-nowrap ${
+              className={`px-3 sm:px-4 py-2 text-xs sm:text-sm uppercase tracking-wider transition-all font-semibold whitespace-nowrap rounded-sm shadow-sm ${
                 currentMode === 'simple'
-                  ? 'bg-[#C5A059] text-[#0F0E0D] font-bold shadow-sm'
+                  ? 'bg-[#C5A059] text-[#0F0E0D] font-bold shadow-md'
                   : 'border border-[#C5A059] text-[#C5A059] hover:bg-[#C5A05911]'
               }`}
             >
@@ -99,9 +99,9 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               id="mode-switch-lab-btn"
               onClick={() => onModeChange('lab')}
-              className={`px-2.5 sm:px-4 py-1 sm:py-1.5 text-[11px] sm:text-xs uppercase tracking-wider sm:tracking-widest transition-all font-medium whitespace-nowrap ${
+              className={`px-3 sm:px-4 py-2 text-xs sm:text-sm uppercase tracking-wider transition-all font-semibold whitespace-nowrap rounded-sm shadow-sm ${
                 currentMode === 'lab'
-                  ? 'bg-[#C5A059] text-[#0F0E0D] font-bold shadow-sm'
+                  ? 'bg-[#C5A059] text-[#0F0E0D] font-bold shadow-md'
                   : 'border border-[#C5A059] text-[#C5A059] hover:bg-[#C5A05911]'
               }`}
             >
@@ -109,77 +109,74 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
           </div>
 
-          {/* Master Volume & Playback Controls */}
-          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
-            {/* Master Volume Slider */}
-            <div className="flex items-center gap-1.5 sm:gap-2 bg-[#1A1614] px-2 sm:px-3 py-1 sm:py-1.5 border border-[#C5A05933] shrink-0">
-              <Volume2 className="w-3.5 h-3.5 text-[#C5A059] shrink-0" />
-              <input
-                id="master-volume-header-slider"
-                type="range"
-                min="0"
-                max="1"
-                step="0.01"
-                value={masterVolume}
-                onChange={(e) => onMasterVolumeChange(parseFloat(e.target.value))}
-                aria-label="Volume Geral Master"
-                className="w-14 sm:w-20 accent-[#C5A059] cursor-pointer"
-              />
-              <span className="text-[9px] sm:text-[10px] font-mono text-[#C5A059] w-6 sm:w-7 text-right shrink-0">
-                {Math.round(masterVolume * 100)}%
-              </span>
-            </div>
-
-            {/* Play / Pause Control */}
-            <button
-              id="header-play-pause-btn"
-              onClick={onTogglePlay}
-              title={isPlaying ? 'Pausar Áudio' : 'Iniciar Áudio'}
-              className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center shrink-0 transition-all ${
-                isPlaying
-                  ? 'border border-[#C5A059] text-[#C5A059] hover:bg-[#C5A05922]'
-                  : 'bg-[#C5A059] text-[#0F0E0D] hover:bg-[#d6b26a]'
-              }`}
-            >
-              {isPlaying ? (
-                <Pause className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current" />
-              ) : (
-                <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current translate-x-0.5" />
-              )}
-            </button>
-
-            {/* Theme Toggle Button Desktop */}
-            <button
-              id="desktop-theme-toggle-btn"
-              onClick={toggleTheme}
-              title={isLight ? 'Modo Escuro (Trevas)' : 'Modo Claro (Luz Sacra)'}
-              aria-label="Alternar tema claro/escuro"
-              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 border border-[#C5A05944] hover:bg-[#C5A05911] text-[#C5A059] text-xs uppercase tracking-widest transition-colors shrink-0"
-            >
-              {isLight ? (
-                <>
-                  <Moon className="w-3.5 h-3.5" />
-                  <span className="hidden lg:inline text-[10px]">Escuro</span>
-                </>
-              ) : (
-                <>
-                  <Sun className="w-3.5 h-3.5" />
-                  <span className="hidden lg:inline text-[10px]">Claro</span>
-                </>
-              )}
-            </button>
-
-            {/* Guide info button desktop */}
-            <button
-              id="desktop-guide-btn"
-              onClick={onOpenGuide}
-              title="Conceitos & Avisos Legais"
-              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 border border-[#C5A05944] hover:bg-[#C5A05911] text-[#C5A059] text-xs uppercase tracking-widest transition-colors shrink-0"
-            >
-              <BookOpen className="w-3.5 h-3.5" />
-              <span>Guia</span>
-            </button>
+          {/* Master Volume Slider - Expands to Fill Available Space */}
+          <div className="flex-1 sm:flex-initial flex items-center gap-2 bg-[#1A1614] px-2.5 sm:px-3.5 py-2 border border-[#C5A05944] min-w-0 rounded-sm">
+            <Volume2 className="w-4 h-4 text-[#C5A059] shrink-0" />
+            <input
+              id="master-volume-header-slider"
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={masterVolume}
+              onChange={(e) => onMasterVolumeChange(parseFloat(e.target.value))}
+              aria-label="Volume Geral Master"
+              className="w-full min-w-[50px] sm:w-28 md:w-32 accent-[#C5A059] cursor-pointer h-2"
+            />
+            <span className="text-[10px] sm:text-xs font-mono text-[#C5A059] w-7 sm:w-8 text-right shrink-0 font-medium">
+              {Math.round(masterVolume * 100)}%
+            </span>
           </div>
+
+          {/* Play / Pause Control */}
+          <button
+            id="header-play-pause-btn"
+            onClick={onTogglePlay}
+            title={isPlaying ? 'Pausar Áudio' : 'Iniciar Áudio'}
+            className={`w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center shrink-0 transition-all shadow-md ${
+              isPlaying
+                ? 'border-2 border-[#C5A059] text-[#C5A059] hover:bg-[#C5A05922]'
+                : 'bg-[#C5A059] text-[#0F0E0D] hover:bg-[#d6b26a]'
+            }`}
+          >
+            {isPlaying ? (
+              <Pause className="w-4 h-4 sm:w-5 sm:h-5 fill-current" />
+            ) : (
+              <Play className="w-4 h-4 sm:w-5 sm:h-5 fill-current translate-x-0.5" />
+            )}
+          </button>
+
+          {/* Theme Toggle Button Desktop */}
+          <button
+            id="desktop-theme-toggle-btn"
+            onClick={toggleTheme}
+            title={isLight ? 'Modo Escuro (Trevas)' : 'Modo Claro (Luz Sacra)'}
+            aria-label="Alternar tema claro/escuro"
+            className="hidden md:flex items-center gap-1.5 px-3 py-2 border border-[#C5A05944] hover:bg-[#C5A05911] text-[#C5A059] text-xs uppercase tracking-widest transition-colors shrink-0 rounded-sm"
+          >
+            {isLight ? (
+              <>
+                <Moon className="w-4 h-4" />
+                <span className="hidden lg:inline text-[11px]">Escuro</span>
+              </>
+            ) : (
+              <>
+                <Sun className="w-4 h-4" />
+                <span className="hidden lg:inline text-[11px]">Claro</span>
+              </>
+            )}
+          </button>
+
+          {/* Guide info button desktop */}
+          <button
+            id="desktop-guide-btn"
+            onClick={onOpenGuide}
+            title="Conceitos & Avisos Legais"
+            className="hidden md:flex items-center gap-1.5 px-3 py-2 border border-[#C5A05944] hover:bg-[#C5A05911] text-[#C5A059] text-xs uppercase tracking-widest transition-colors shrink-0 rounded-sm"
+          >
+            <BookOpen className="w-4 h-4" />
+            <span className="text-xs">Guia</span>
+          </button>
 
         </div>
 
