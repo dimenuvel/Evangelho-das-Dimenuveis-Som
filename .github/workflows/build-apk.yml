@@ -86,11 +86,15 @@ jobs:
           echo "Verified assets placed into android project:"
           ls -la android/app/src/main/assets/
 
-      - name: Build Android APK with Gradle Wrapper
+      - name: Build Android APK
         run: |
           cd android
+          if [ ! -f "gradle/wrapper/gradle-wrapper.jar" ]; then
+            echo "Gradle wrapper jar not found in repository. Generating wrapper with Gradle 8.7..."
+            gradle wrapper --gradle-version 8.7 --distribution-type bin
+          fi
           chmod +x ./gradlew
-          ./gradlew assembleDebug --no-daemon --stacktrace
+          ./gradlew assembleDebug --no-daemon --stacktrace || gradle assembleDebug --no-daemon --stacktrace
 
       - name: Collect Generated APK
         run: |
