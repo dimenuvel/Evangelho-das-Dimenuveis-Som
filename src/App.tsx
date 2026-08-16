@@ -234,7 +234,7 @@ function AppContent() {
               rel="noopener noreferrer"
               className="text-[#C5A059] hover:underline tracking-widest transition-colors font-medium"
             >
-              © Evangelho das Dimenúveis
+              © Evangelho das Dimenúveis v1.3
             </a>
           </div>
         </div>

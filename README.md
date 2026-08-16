@@ -2,7 +2,7 @@
 
 > Espaço acústico e laboratório de experimentação sonora para cultivo de presença consciente, meditação profunda e harmonia geométrica.
 
-[![Android App](https://img.shields.io/badge/Download-Android%20APK%20-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/dimenuvel/Evangelho-das-Dimenuveis-Som/releases/tag/v1.2)
+[![Android App](https://img.shields.io/badge/Download-Android%20APK%20-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/dimenuvel/Evangelho-das-Dimenuveis-Som/releases/tag/v1.3)
 
 [![Web Audio API](https://img.shields.io/badge/Audio-Web%20Audio%20API-goldenrod)](#arquitetura-do-motor-de-áudio)
 [![React 19](https://img.shields.io/badge/Framework-React%2019-61dafb)](#tecnologias)
@@ -11,7 +11,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Site Oficial](https://img.shields.io/badge/Site-Evangelho%20das%20Dimenúveis-C5A059)](https://dimenuvel.github.io/Evangelho-das-Dimenuveis-site/)
 
-> 📱 **Aplicativo Android Disponível**: Baixe a versão para Android (APK v1.2) diretamente na aba de [Releases no GitHub](https://github.com/dimenuvel/Evangelho-das-Dimenuveis-Som/releases/tag/v1.2).
+> 📱 **Aplicativo Android Disponível**: Baixe a versão para Android (APK v1.3) diretamente na aba de [Releases no GitHub](https://github.com/dimenuvel/Evangelho-das-Dimenuveis-Som/releases/tag/v1.3).
 
 ---
 
@@ -129,6 +129,64 @@ Todo o áudio é sintetizado diretamente no navegador do usuário utilizando a *
    ```bash
    npm run build
    ```
+   *(Nota: O comando de build executa automaticamente o script `postbuild` que copia os arquivos compilados para a pasta de assets do projeto Android em `android/app/src/main/assets/`).*
+
+---
+
+## 📱 Como Compilar o APK para Android
+
+O projeto possui um contêiner nativo Android baseado em WebView otimizado para áudio de baixa latência e aceleração de hardware.
+
+### Pré-requisitos para compilação Android
+- **Java Development Kit (JDK)**: Versão 17
+- **Android SDK**: Plataforma Android 14 (API 34) e Build-Tools
+- **Node.js**: Versão 18 ou superior
+
+### Opção 1: Compilação via Linha de Comando (CLI)
+
+1. **Gere os assets web de produção:**
+   ```bash
+   npm run build
+   ```
+   *O hook de `postbuild` sincroniza automaticamente a pasta `dist/` para `android/app/src/main/assets/`.*
+
+2. **Acesse o diretório Android:**
+   ```bash
+   cd android
+   ```
+
+3. **Compile o APK com o Gradle Wrapper:**
+   - **Linux / macOS:**
+     ```bash
+     chmod +x ./gradlew
+     ./gradlew assembleDebug
+     ```
+   - **Windows:**
+     ```cmd
+     gradlew.bat assembleDebug
+     ```
+
+4. **Localização do APK gerado:**
+   O arquivo compilado estará disponível em:
+   ```
+   android/app/build/outputs/apk/debug/Laboratorio-de-Som-Diminuveis.apk
+   ```
+
+### Opção 2: Compilação via Android Studio
+
+1. Execute `npm run build` na raiz do projeto para atualizar os assets.
+2. Abra o **Android Studio**.
+3. Selecione **Open** e escolha a pasta `android/` deste repositório.
+4. Aguarde a sincronização do Gradle (*Gradle Sync*).
+5. Vá no menu **Build** > **Build Bundle(s) / APK(s)** > **Build APK(s)**.
+
+### Opção 3: Compilação Automatizada via GitHub Actions
+
+O repositório já conta com o fluxo de CI/CD configurado em `.github/workflows/build-apk.yml`:
+1. Acesse a aba **Actions** no repositório do GitHub.
+2. Selecione a ação **Build Android APK**.
+3. Clique em **Run workflow**.
+4. Ao término do job, baixe o artefato compactado **`Laboratorio-de-Som-Diminuveis.zip`** contendo o arquivo `Laboratorio-de-Som-Diminuveis.apk`.
 
 ---
 
