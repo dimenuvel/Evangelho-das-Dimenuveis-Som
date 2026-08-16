@@ -86,25 +86,25 @@ export const LayerCard: React.FC<LayerCardProps> = ({
       }`}
     >
       {/* 1. Header Bar */}
-      <div className="bg-[#1A1614] px-4 py-3 border-b border-[#C5A05922] flex items-center justify-between gap-3">
+      <div className="bg-[#1A1614] px-3 sm:px-4 py-2.5 sm:py-3 border-b border-[#C5A05922] flex items-center justify-between gap-2 sm:gap-3">
         
         {/* Left: Layer Number, Enable & Name */}
-        <div className="flex items-center gap-3 min-w-0">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 overflow-hidden">
           <input
             id={`layer-enable-check-${layer.id}`}
             type="checkbox"
             checked={layer.enabled}
             onChange={() => onToggleEnabled(layer.id)}
             title={layer.enabled ? 'Desativar Camada' : 'Ativar Camada'}
-            className="w-4 h-4 accent-[#C5A059] cursor-pointer"
+            className="w-4 h-4 accent-[#C5A059] cursor-pointer shrink-0"
           />
 
-          <span className="w-6 h-6 border border-[#C5A05944] bg-[#0F0E0D] text-[#C5A059] text-[10px] font-mono font-bold flex items-center justify-center shrink-0">
+          <span className="w-5 h-5 sm:w-6 sm:h-6 border border-[#C5A05944] bg-[#0F0E0D] text-[#C5A059] text-[9px] sm:text-[10px] font-mono font-bold flex items-center justify-center shrink-0">
             0{index + 1}
           </span>
 
           {isEditingName ? (
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 min-w-0 flex-1">
               <input
                 type="text"
                 value={nameInput}
@@ -112,33 +112,33 @@ export const LayerCard: React.FC<LayerCardProps> = ({
                 onBlur={handleNameSave}
                 onKeyDown={(e) => e.key === 'Enter' && handleNameSave()}
                 autoFocus
-                className="bg-[#0F0E0D] text-xs font-serif italic text-[#C5A059] px-2 py-0.5 border border-[#C5A059] outline-none"
+                className="bg-[#0F0E0D] text-xs font-serif italic text-[#C5A059] px-2 py-0.5 border border-[#C5A059] outline-none min-w-0 w-full max-w-[200px]"
               />
-              <button onClick={handleNameSave} className="text-[#C5A059] p-1">
+              <button onClick={handleNameSave} className="text-[#C5A059] p-1 shrink-0">
                 <Check className="w-3.5 h-3.5" />
               </button>
             </div>
           ) : (
             <div
               onClick={() => setIsEditingName(true)}
-              className="flex items-center gap-2 cursor-pointer group"
+              className="flex items-center gap-1.5 sm:gap-2 cursor-pointer group min-w-0 flex-1 overflow-hidden"
               title="Clique para renomear"
             >
               <h4 className="text-xs sm:text-sm font-serif italic text-[#D4CBBF] group-hover:text-[#C5A059] transition-colors truncate">
                 {layer.name}
               </h4>
-              <Edit2 className="w-3 h-3 text-[#D4CBBF]/40 group-hover:text-[#C5A059] transition-colors" />
+              <Edit2 className="w-3 h-3 text-[#D4CBBF]/40 group-hover:text-[#C5A059] transition-colors shrink-0" />
             </div>
           )}
         </div>
 
         {/* Right: Quick Actions (Solo, Mute, Clone, Delete) */}
-        <div className="flex items-center gap-1.5 shrink-0">
+        <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
           {/* Solo Button */}
           <button
             id={`layer-solo-btn-${layer.id}`}
             onClick={() => onToggleSolo(layer.id)}
-            className={`px-2 py-1 text-[10px] font-bold uppercase tracking-wider transition-colors ${
+            className={`px-1.5 sm:px-2 py-0.5 sm:py-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider transition-colors shrink-0 ${
               layer.solo
                 ? 'bg-[#C5A059] text-[#0F0E0D]'
                 : 'bg-[#0F0E0D] border border-[#C5A05933] text-[#D4CBBF]/60 hover:text-[#C5A059] hover:border-[#C5A059]'
@@ -152,7 +152,7 @@ export const LayerCard: React.FC<LayerCardProps> = ({
           <button
             id={`layer-mute-btn-${layer.id}`}
             onClick={() => onToggleMute(layer.id)}
-            className={`px-2 py-1 text-[10px] font-bold uppercase tracking-wider transition-colors ${
+            className={`px-1.5 sm:px-2 py-0.5 sm:py-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider transition-colors shrink-0 ${
               layer.mute
                 ? 'bg-red-900/80 text-red-200 border border-red-700'
                 : 'bg-[#0F0E0D] border border-[#C5A05933] text-[#D4CBBF]/60 hover:text-[#C5A059] hover:border-[#C5A059]'
@@ -166,7 +166,7 @@ export const LayerCard: React.FC<LayerCardProps> = ({
           <button
             id={`layer-clone-btn-${layer.id}`}
             onClick={() => onDuplicate(layer.id)}
-            className="p-1.5 bg-[#0F0E0D] border border-[#C5A05933] text-[#D4CBBF]/60 hover:text-[#C5A059] hover:border-[#C5A059] transition-colors"
+            className="p-1 sm:p-1.5 bg-[#0F0E0D] border border-[#C5A05933] text-[#D4CBBF]/60 hover:text-[#C5A059] hover:border-[#C5A059] transition-colors shrink-0"
             title="Duplicar Camada"
           >
             <Copy className="w-3 h-3" />
@@ -177,7 +177,7 @@ export const LayerCard: React.FC<LayerCardProps> = ({
             <button
               id={`layer-delete-btn-${layer.id}`}
               onClick={() => onRemove(layer.id)}
-              className="p-1.5 bg-[#0F0E0D] border border-[#C5A05933] text-[#D4CBBF]/60 hover:text-red-400 hover:border-red-500/50 transition-colors"
+              className="p-1 sm:p-1.5 bg-[#0F0E0D] border border-[#C5A05933] text-[#D4CBBF]/60 hover:text-red-400 hover:border-red-500/50 transition-colors shrink-0"
               title="Excluir Camada"
             >
               <Trash2 className="w-3 h-3" />

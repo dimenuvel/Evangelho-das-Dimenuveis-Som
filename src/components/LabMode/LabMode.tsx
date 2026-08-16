@@ -124,25 +124,25 @@ export const LabMode: React.FC<LabModeProps> = ({
       )}
 
       {/* Top Laboratory Toolbar */}
-      <div className="bg-[#141210] border border-[#C5A05933] p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xl">
+      <div className="bg-[#141210] border border-[#C5A05933] p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xl">
         
         {/* Left: Active Preset & Summary */}
-        <div className="space-y-1">
-          <div className="flex items-center gap-3">
-            <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#C5A059] border border-[#C5A05944] bg-[#1A1614] px-2.5 py-0.5">
+        <div className="space-y-1 min-w-0 flex-1">
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#C5A059] border border-[#C5A05944] bg-[#1A1614] px-2.5 py-0.5 shrink-0">
               LABORATÓRIO
             </span>
             <h3 className="text-base font-serif italic text-[#C5A059] tracking-wide truncate">
               {currentPreset.name}
             </h3>
           </div>
-          <p className="text-[11px] font-mono text-[#D4CBBF] opacity-70">
+          <p className="text-[11px] font-mono text-[#D4CBBF] opacity-70 truncate">
             {activeLayersCount} de {layers.length} camadas ativas // {beatDiff > 0 ? `Batimento: ${beatDiff.toFixed(1)} Hz (${beatInfo.rhythmBand})` : 'Modo Uníssono'}
           </p>
         </div>
 
         {/* Right: Actions */}
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2.5 shrink-0">
           {/* Add Layer Button */}
           <button
             id="lab-add-layer-btn"
