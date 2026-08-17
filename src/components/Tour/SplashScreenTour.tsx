@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  X,
   Compass,
   Headphones,
   Sliders,
@@ -202,7 +201,7 @@ export const SplashScreenTour: React.FC<SplashScreenTourProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <button
               id="skip-tour-header-btn"
               onClick={handleSkip}
@@ -213,10 +212,10 @@ export const SplashScreenTour: React.FC<SplashScreenTourProps> = ({
             <button
               id="close-tour-modal-btn"
               onClick={handleSkip}
-              className="p-1.5 border border-[#C5A05933] bg-[#1A1614] text-[#D4CBBF] hover:text-[#C5A059] hover:border-[#C5A059] transition-colors"
+              className="text-xs font-mono uppercase tracking-widest text-[#D4CBBF]/70 hover:text-[#C5A059] bg-transparent transition-colors px-2 py-1"
               title="Fechar Guia"
             >
-              <X className="w-4 h-4" />
+              Fechar
             </button>
           </div>
         </div>

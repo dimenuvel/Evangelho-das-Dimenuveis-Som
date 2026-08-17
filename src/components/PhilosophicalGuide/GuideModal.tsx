@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, BookOpen, ShieldAlert, Sparkles, Headphones, Compass } from 'lucide-react';
+import { BookOpen, ShieldAlert, Sparkles, Headphones, Compass } from 'lucide-react';
 import { DIMENUVEIS_INFO } from '../../presets/dimenuveisPresets';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -19,28 +19,29 @@ export const GuideModal: React.FC<GuideModalProps> = ({ isOpen, onClose, onOpenT
         id="philosophical-guide-modal"
         className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto bg-[#141210] border border-[#C5A059] p-6 sm:p-8 text-[#D4CBBF] shadow-2xl space-y-6"
       >
-        {/* Close Button */}
-        <button
-          id="close-guide-modal-btn"
-          onClick={onClose}
-          className="absolute top-5 right-5 p-2 border border-[#C5A05933] bg-[#1A1614] text-[#D4CBBF] hover:text-[#C5A059] hover:border-[#C5A059] transition-colors"
-        >
-          <X className="w-4 h-4" />
-        </button>
+        {/* Title & Close Bar */}
+        <div className="flex items-center justify-between gap-4 border-b border-[#C5A05922] pb-4">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-10 h-10 border border-[#C5A059] bg-[#1A1614] flex items-center justify-center text-[#C5A059] shrink-0">
+              <BookOpen className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-xl font-serif italic text-[#C5A059]">
+                Evangelho das Dimenúveis
+              </h2>
+              <p className="text-[10px] uppercase tracking-[0.25em] text-[#D4CBBF] opacity-70">
+                Laboratório de Som & Prática Contemplativa
+              </p>
+            </div>
+          </div>
 
-        {/* Title */}
-        <div className="flex items-center gap-3 border-b border-[#C5A05922] pb-4">
-          <div className="w-10 h-10 border border-[#C5A059] bg-[#1A1614] flex items-center justify-center text-[#C5A059]">
-            <BookOpen className="w-5 h-5" />
-          </div>
-          <div>
-            <h2 className="text-xl font-serif italic text-[#C5A059]">
-              Evangelho das Dimenúveis
-            </h2>
-            <p className="text-[10px] uppercase tracking-[0.25em] text-[#D4CBBF] opacity-70">
-              Laboratório de Som & Prática Contemplativa
-            </p>
-          </div>
+          <button
+            id="close-guide-modal-btn"
+            onClick={onClose}
+            className="text-xs font-mono uppercase tracking-widest text-[#D4CBBF]/70 hover:text-[#C5A059] bg-transparent transition-colors px-2 py-1 shrink-0"
+          >
+            Fechar
+          </button>
         </div>
 
         {/* Essential Disclaimers */}
@@ -51,9 +52,6 @@ export const GuideModal: React.FC<GuideModalProps> = ({ isOpen, onClose, onOpenT
           </div>
           <p className="leading-relaxed opacity-80">
             • <strong>Ferramenta experimental de áudio</strong> para atenção, contemplação e prática pessoal.
-          </p>
-          <p className="leading-relaxed opacity-80">
-            • <strong>As configurações são experimentais e contemplativas; não constituem tratamento médico.</strong> O som não cura doenças, não trata ansiedade ou depressão de forma clínica nem altera a consciência de modo medicinalmente certificado.
           </p>
           <p className="leading-relaxed opacity-80">
             • As <em>Sete Dimenúveis</em> são conceitos filosóficos e simbólicos do Evangelho, não diagnósticos nem prescrições neurológicas.

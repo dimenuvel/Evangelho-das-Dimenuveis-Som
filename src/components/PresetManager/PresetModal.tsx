@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { SoundPreset, AudioLayer } from '../../types';
 import {
-  X,
   BookmarkPlus,
   Download,
   Upload,
@@ -103,19 +102,10 @@ export const PresetModal: React.FC<PresetModalProps> = ({
         id="preset-manager-modal"
         className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-[#141210] border border-[#C5A059] p-6 sm:p-8 text-[#D4CBBF] shadow-2xl space-y-6"
       >
-        {/* Close Button */}
-        <button
-          id="close-preset-modal-btn"
-          onClick={onClose}
-          className="absolute top-5 right-5 p-2 border border-[#C5A05933] bg-[#1A1614] text-[#D4CBBF] hover:text-[#C5A059] hover:border-[#C5A059] transition-colors"
-        >
-          <X className="w-4 h-4" />
-        </button>
-
         {/* Header */}
-        <div className="flex items-center justify-between gap-3 border-b border-[#C5A05922] pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#C5A05922] pb-4">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 border border-[#C5A059] bg-[#1A1614] flex items-center justify-center text-[#C5A059]">
+            <div className="w-9 h-9 border border-[#C5A059] bg-[#1A1614] flex items-center justify-center text-[#C5A059] shrink-0">
               <BookmarkPlus className="w-5 h-5" />
             </div>
             <div>
@@ -128,13 +118,23 @@ export const PresetModal: React.FC<PresetModalProps> = ({
             </div>
           </div>
 
-          <button
-            id="toggle-save-form-btn"
-            onClick={() => setShowSaveForm(!showSaveForm)}
-            className="px-4 py-2 bg-[#C5A059] text-[#0F0E0D] text-xs uppercase tracking-widest font-bold hover:bg-[#d6b26a] transition-colors"
-          >
-            {showSaveForm ? 'Cancelar' : '+ Salvar Atual'}
-          </button>
+          <div className="flex items-center gap-3 self-end sm:self-center">
+            <button
+              id="toggle-save-form-btn"
+              onClick={() => setShowSaveForm(!showSaveForm)}
+              className="px-4 py-2 bg-[#C5A059] text-[#0F0E0D] text-xs uppercase tracking-widest font-bold hover:bg-[#d6b26a] transition-colors"
+            >
+              {showSaveForm ? 'Cancelar' : '+ Salvar Atual'}
+            </button>
+
+            <button
+              id="close-preset-modal-btn"
+              onClick={onClose}
+              className="text-xs font-mono uppercase tracking-widest text-[#D4CBBF]/70 hover:text-[#C5A059] bg-transparent transition-colors px-2 py-1"
+            >
+              Fechar
+            </button>
+          </div>
         </div>
 
         {/* Feedback Alert */}
