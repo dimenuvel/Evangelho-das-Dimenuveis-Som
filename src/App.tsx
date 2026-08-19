@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAudioEngine } from './hooks/useAudioEngine';
 import { usePresets } from './hooks/usePresets';
 import { useSessionTimer } from './hooks/useSessionTimer';
@@ -10,10 +10,12 @@ import { GuideModal } from './components/PhilosophicalGuide/GuideModal';
 import { PresetModal } from './components/PresetManager/PresetModal';
 import { SplashScreenTour } from './components/Tour/SplashScreenTour';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
-import { AlertCircle, X, Sun, Moon } from 'lucide-react';
+import { LanguageProvider, useLanguage } from './context/LanguageContext';
+import { AlertCircle, X, Sun, Moon, Mail } from 'lucide-react';
 
 function AppContent() {
   const { theme, toggleTheme, isLight } = useTheme();
+  const { t, isEnglish } = useLanguage();
   const [currentMode, setCurrentMode] = useState<'simple' | 'lab'>('simple');
   const [visualizerMode, setVisualizerMode] = useState<VisualizerMode>('spiral');
   const [isGuideOpen, setIsGuideOpen] = useState<boolean>(false);
@@ -88,6 +90,22 @@ function AppContent() {
 
   const formattedTime = formatTime(remainingSeconds);
 
+  // Scroll window to top whenever mode changes (e.g., Simple -> Lab)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    }
+  }, [currentMode]);
+
+  const handleModeChange = (mode: 'simple' | 'lab') => {
+    setCurrentMode(mode);
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    }
+  };
+
   const handleSelectPreset = (preset: SoundPreset) => {
     loadPreset(preset, isPlaying);
   };
@@ -98,7 +116,7 @@ function AppContent() {
       {/* 1. Global Header */}
       <Header
         currentMode={currentMode}
-        onModeChange={setCurrentMode}
+        onModeChange={handleModeChange}
         isPlaying={isPlaying}
         onTogglePlay={togglePlay}
         onStop={() => {
@@ -138,7 +156,7 @@ function AppContent() {
               pause(0.2);
             }}
             onSelectPreset={handleSelectPreset}
-            onSwitchToLab={() => setCurrentMode('lab')}
+            onSwitchToLab={() => handleModeChange('lab')}
             masterVolume={masterVolume}
             onMasterVolumeChange={setMasterVolume}
             visualizerMode={visualizerMode}
@@ -191,7 +209,7 @@ function AppContent() {
       <footer className="w-full border-t border-[#C5A05933] bg-[#0F0E0D] py-4 px-6 text-center text-xs text-[#D4CBBF]/60 space-y-2">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-[10px] uppercase tracking-[0.15em]">
           <div>
-            As configurações são experimentais e contemplativas; não constituem tratamento médico.
+            {t.footer.disclaimer}
           </div>
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-[#C5A059]">
             <button
@@ -200,7 +218,7 @@ function AppContent() {
               className="text-[#D4CBBF] opacity-70 hover:opacity-100 hover:text-[#C5A059] hover:underline tracking-widest transition-colors flex items-center gap-1"
             >
               {isLight ? <Moon className="w-3 h-3 text-[#C5A059]" /> : <Sun className="w-3 h-3 text-[#C5A059]" />}
-              <span>{isLight ? 'Modo Escuro' : 'Modo Claro'}</span>
+              <span>{isLight ? t.footer.themeDark : t.footer.themeLight}</span>
             </button>
             <span>//</span>
             <button
@@ -208,7 +226,7 @@ function AppContent() {
               onClick={() => setIsTourOpen(true)}
               className="text-[#D4CBBF] opacity-70 hover:opacity-100 hover:text-[#C5A059] hover:underline tracking-widest transition-colors"
             >
-              Tour do App
+              {t.footer.appTour}
             </button>
             <span>//</span>
             <button
@@ -216,7 +234,7 @@ function AppContent() {
               onClick={() => setIsGuideOpen(true)}
               className="hover:underline tracking-widest"
             >
-              Conceitos & Avisos
+              {t.footer.conceptsAndNotices}
             </button>
             <span>//</span>
             <button
@@ -224,8 +242,18 @@ function AppContent() {
               onClick={() => setIsPresetModalOpen(true)}
               className="hover:underline tracking-widest"
             >
-              Predefinições
+              {t.footer.presets}
             </button>
+            <span>//</span>
+            <a
+              id="footer-contact-link"
+              href={`mailto:samuel.tiem@proton.me?subject=${encodeURIComponent(t.footer.contactSubject)}`}
+              className="text-[#D4CBBF] opacity-70 hover:opacity-100 hover:text-[#C5A059] hover:underline tracking-widest transition-colors flex items-center gap-1"
+              title={t.footer.contactTooltip}
+            >
+              <Mail className="w-3 h-3 text-[#C5A059]" />
+              <span>{t.footer.contact}</span>
+            </a>
             <span>//</span>
             <a
               id="footer-copyright-link"
@@ -234,7 +262,7 @@ function AppContent() {
               rel="noopener noreferrer"
               className="text-[#C5A059] hover:underline tracking-widest transition-colors font-medium"
             >
-              © Evangelho das Dimenúveis v1.3
+              {t.footer.copyright}
             </a>
           </div>
         </div>
@@ -284,9 +312,12 @@ function AppContent() {
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <AppContent />
-    </ThemeProvider>
+    <LanguageProvider>
+      <ThemeProvider>
+        <AppContent />
+      </ThemeProvider>
+    </LanguageProvider>
   );
 }
+
 

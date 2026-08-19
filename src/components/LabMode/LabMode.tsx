@@ -17,6 +17,7 @@ import {
   ChevronUp,
 } from 'lucide-react';
 import { calculateBeatDifference, getBeatBandInfo } from '../../audio/audioMath';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface LabModeProps {
   layers: AudioLayer[];
@@ -76,6 +77,7 @@ export const LabMode: React.FC<LabModeProps> = ({
   onStopTimer,
   onDismissCompleted,
 }) => {
+  const { t, getPresetText, isEnglish } = useLanguage();
   const [activeTab, setActiveTab] = useState<'layers' | 'mixer' | 'session' | 'visualizer'>('layers');
   const [customTimerMins, setCustomTimerMins] = useState<number>(15);
   const [showDiagnostics, setShowDiagnostics] = useState<boolean>(false);
@@ -99,6 +101,17 @@ export const LabMode: React.FC<LabModeProps> = ({
   const beatDiff = primaryBinaural ? calculateBeatDifference(primaryBinaural.leftFreq, primaryBinaural.rightFreq) : 0;
   const beatInfo = getBeatBandInfo(beatDiff);
 
+  const getLocalizedBandName = () => {
+    if (beatDiff === 0) return t.bands.unison.name;
+    if (beatDiff < 4) return t.bands.delta.name;
+    if (beatDiff < 8) return t.bands.theta.name;
+    if (beatDiff < 14) return t.bands.alpha.name;
+    if (beatDiff < 30) return t.bands.beta.name;
+    return t.bands.gamma.name;
+  };
+
+  const activePresetTexts = getPresetText(currentPreset.id, currentPreset.name, currentPreset.description, currentPreset.dimenuvelId);
+
   return (
     <div id="lab-mode-container" className="max-w-6xl mx-auto space-y-6 pb-16">
       
@@ -110,15 +123,15 @@ export const LabMode: React.FC<LabModeProps> = ({
               <CheckCircle2 className="w-4 h-4" />
             </div>
             <div>
-              <p className="font-serif font-bold text-[#C5A059] uppercase tracking-wider">Sessão de Prática Concluída</p>
-              <p className="text-[#D4CBBF]/80 text-xs">Transição suave finalizada. A quietude permanece.</p>
+              <p className="font-serif font-bold text-[#C5A059] uppercase tracking-wider">{t.labMode.sessionPracticeCompletedTitle}</p>
+              <p className="text-[#D4CBBF]/80 text-xs">{t.labMode.sessionPracticeCompletedDesc}</p>
             </div>
           </div>
           <button
             onClick={onDismissCompleted}
             className="px-4 py-1.5 border border-[#C5A059] text-[#C5A059] hover:bg-[#C5A05922] text-xs uppercase tracking-widest transition-colors"
           >
-            Fechar
+            {t.common.close}
           </button>
         </div>
       )}
@@ -130,19 +143,19 @@ export const LabMode: React.FC<LabModeProps> = ({
         <div className="space-y-1.5 min-w-0 flex-1">
           <div className="flex items-center gap-3 min-w-0 flex-wrap">
             <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#C5A059] border border-[#C5A05944] bg-[#1A1614] px-2.5 py-0.5 shrink-0">
-              LABORATÓRIO
+              {t.labMode.labBadge}
             </span>
             <h3 className="text-base font-serif italic text-[#C5A059] tracking-wide">
-              {currentPreset.name}
+              {activePresetTexts.name}
             </h3>
           </div>
-          {currentPreset.description && (
+          {activePresetTexts.description && (
             <p className="text-xs text-[#D4CBBF]/85 leading-relaxed max-w-2xl">
-              {currentPreset.description}
+              {activePresetTexts.description}
             </p>
           )}
           <p className="text-[11px] font-mono text-[#D4CBBF] opacity-70">
-            {activeLayersCount} de {layers.length} camadas ativas // {beatDiff > 0 ? `Batimento: ${beatDiff.toFixed(1)} Hz (${beatInfo.rhythmBand})` : 'Modo Uníssono'}
+            {activeLayersCount} {isEnglish ? `of ${layers.length} active layers` : `de ${layers.length} camadas ativas`} // {beatDiff > 0 ? `${t.simpleMode.binauralPulse}: ${beatDiff.toFixed(1)} Hz (${getLocalizedBandName()})` : t.simpleMode.unison}
           </p>
         </div>
 
@@ -155,7 +168,7 @@ export const LabMode: React.FC<LabModeProps> = ({
             className="flex items-center gap-2 px-4 py-2 bg-[#C5A059] text-[#0F0E0D] text-xs uppercase tracking-widest font-bold hover:bg-[#d6b26a] shadow-sm transition-all active:scale-95"
           >
             <Plus className="w-4 h-4" />
-            <span>Adicionar Camada</span>
+            <span>{t.labMode.addLayer}</span>
           </button>
 
           {/* Presets Manager Button */}
@@ -165,7 +178,7 @@ export const LabMode: React.FC<LabModeProps> = ({
             className="flex items-center gap-2 px-4 py-2 border border-[#C5A059] text-[#C5A059] text-xs uppercase tracking-widest hover:bg-[#C5A05911] transition-colors"
           >
             <BookmarkPlus className="w-4 h-4 text-[#C5A059]" />
-            <span>Predefinições</span>
+            <span>{t.labMode.presetsLibrary}</span>
           </button>
         </div>
 
@@ -183,7 +196,7 @@ export const LabMode: React.FC<LabModeProps> = ({
           }`}
         >
           <Layers className="w-4 h-4" />
-          <span>Camadas & Frequências ({layers.length})</span>
+          <span>{t.labMode.layersTab} ({layers.length})</span>
         </button>
 
         <button
@@ -196,7 +209,7 @@ export const LabMode: React.FC<LabModeProps> = ({
           }`}
         >
           <Sliders className="w-4 h-4" />
-          <span>Mesa de Som (Mixer)</span>
+          <span>{t.labMode.mixerTab}</span>
         </button>
 
         <button
@@ -209,7 +222,7 @@ export const LabMode: React.FC<LabModeProps> = ({
           }`}
         >
           <Clock className="w-4 h-4" />
-          <span>Sessão & Fade</span>
+          <span>{t.labMode.sessionTab}</span>
         </button>
 
         <button
@@ -222,7 +235,7 @@ export const LabMode: React.FC<LabModeProps> = ({
           }`}
         >
           <Eye className="w-4 h-4" />
-          <span>Visualizador Sagrado</span>
+          <span>{t.labMode.visualizerTab}</span>
         </button>
       </div>
 
@@ -231,12 +244,14 @@ export const LabMode: React.FC<LabModeProps> = ({
         <div className="space-y-4 animate-fade-in">
           {layers.length === 0 ? (
             <div className="p-8 text-center bg-[#141210] border border-[#C5A05933] space-y-3">
-              <p className="text-xs uppercase tracking-widest text-[#D4CBBF] opacity-60">Nenhuma camada sonora configurada.</p>
+              <p className="text-xs uppercase tracking-widest text-[#D4CBBF] opacity-60">
+                {isEnglish ? 'No sound layers configured.' : 'Nenhuma camada sonora configurada.'}
+              </p>
               <button
                 onClick={onAddLayer}
                 className="px-5 py-2.5 bg-[#C5A059] text-[#0F0E0D] text-xs uppercase tracking-widest font-bold hover:bg-[#d6b26a]"
               >
-                Criar Primeira Camada
+                {isEnglish ? 'Create First Layer' : 'Criar Primeira Camada'}
               </button>
             </div>
           ) : (
@@ -263,7 +278,7 @@ export const LabMode: React.FC<LabModeProps> = ({
                 className="w-full py-4 border border-dashed border-[#C5A05944] hover:border-[#C5A059] text-[#C5A059] flex items-center justify-center gap-2 text-xs uppercase tracking-[0.2em] font-medium transition-all bg-[#141210] hover:bg-[#1A1614]"
               >
                 <Plus className="w-4 h-4 text-[#C5A059]" />
-                <span>Adicionar Outra Camada Sonora</span>
+                <span>{isEnglish ? 'Add Another Sound Layer' : 'Adicionar Outra Camada Sonora'}</span>
               </button>
             </div>
           )}
@@ -290,41 +305,43 @@ export const LabMode: React.FC<LabModeProps> = ({
       {activeTab === 'session' && (
         <div className="bg-[#141210] border border-[#C5A05933] p-6 sm:p-8 space-y-6 shadow-xl animate-fade-in">
           <div className="border-b border-[#C5A05922] pb-4">
-            <span className="text-[10px] uppercase tracking-[0.25em] text-[#C5A059] opacity-80">Prática Temporal</span>
+            <span className="text-[10px] uppercase tracking-[0.25em] text-[#C5A059] opacity-80">
+              {isEnglish ? 'Temporal Practice' : 'Prática Temporal'}
+            </span>
             <h3 className="text-base sm:text-lg font-serif italic text-[#C5A059]">
-              Temporizador & Atenuação Gradual da Sessão
+              {t.labMode.sessionTimerTitle}
             </h3>
             <p className="text-xs text-[#D4CBBF]/70 mt-1">
-              Configure a duração da prática meditativa com atenuação suave ao término (sem cortes abruptos).
+              {t.labMode.sessionTimerDesc}
             </p>
           </div>
 
           {/* Quick timer preset buttons */}
           <div className="space-y-3">
             <span className="text-[10px] font-semibold text-[#C5A059] uppercase tracking-[0.2em]">
-              Durações Rápidas
+              {isEnglish ? 'Quick Durations' : 'Durações Rápidas'}
             </span>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {[
-                { label: '5 Minutos', sec: 300 },
-                { label: '10 Minutos', sec: 600 },
-                { label: '15 Minutos', sec: 900 },
-                { label: '20 Minutos', sec: 1200 },
-                { label: '30 Minutos', sec: 1800 },
-                { label: '45 Minutos', sec: 2700 },
-                { label: '60 Minutos', sec: 3600 },
-                { label: '90 Minutos', sec: 5400 },
-              ].map((t) => (
+                { label: `5 ${isEnglish ? 'Minutes' : 'Minutos'}`, sec: 300 },
+                { label: `10 ${isEnglish ? 'Minutes' : 'Minutos'}`, sec: 600 },
+                { label: `15 ${isEnglish ? 'Minutes' : 'Minutos'}`, sec: 900 },
+                { label: `20 ${isEnglish ? 'Minutes' : 'Minutos'}`, sec: 1200 },
+                { label: `30 ${isEnglish ? 'Minutes' : 'Minutos'}`, sec: 1800 },
+                { label: `45 ${isEnglish ? 'Minutes' : 'Minutos'}`, sec: 2700 },
+                { label: `60 ${isEnglish ? 'Minutes' : 'Minutos'}`, sec: 3600 },
+                { label: `90 ${isEnglish ? 'Minutes' : 'Minutos'}`, sec: 5400 },
+              ].map((item) => (
                 <button
-                  key={t.sec}
-                  onClick={() => onStartSession(t.sec)}
+                  key={item.sec}
+                  onClick={() => onStartSession(item.sec)}
                   className={`p-3 border text-xs uppercase tracking-wider font-medium transition-all text-center ${
-                    selectedDuration === t.sec && isTimerRunning
+                    selectedDuration === item.sec && isTimerRunning
                       ? 'bg-[#C5A059] text-[#0F0E0D] font-bold border-[#C5A059]'
                       : 'bg-[#1A1614] text-[#D4CBBF] border-[#C5A05922] hover:border-[#C5A059] hover:bg-[#C5A05911]'
                   }`}
                 >
-                  {t.label}
+                  {item.label}
                 </button>
               ))}
             </div>
@@ -333,8 +350,8 @@ export const LabMode: React.FC<LabModeProps> = ({
           {/* Custom Duration Input */}
           <div className="bg-[#1A1614] p-4 border border-[#C5A05933] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h4 className="text-xs uppercase tracking-widest font-semibold text-[#D4CBBF]">Duração Personalizada</h4>
-              <p className="text-[10px] text-[#D4CBBF] opacity-60">Defina o tempo exato em minutos</p>
+              <h4 className="text-xs uppercase tracking-widest font-semibold text-[#D4CBBF]">{isEnglish ? 'Custom Duration' : 'Duração Personalizada'}</h4>
+              <p className="text-[10px] text-[#D4CBBF] opacity-60">{isEnglish ? 'Set exact time in minutes' : 'Defina o tempo exato em minutos'}</p>
             </div>
             <div className="flex items-center gap-2">
               <input
@@ -345,12 +362,12 @@ export const LabMode: React.FC<LabModeProps> = ({
                 onChange={(e) => setCustomTimerMins(Math.max(1, parseInt(e.target.value) || 1))}
                 className="w-20 bg-[#0F0E0D] text-[#C5A059] font-mono px-3 py-1.5 border border-[#C5A05944] text-xs text-center outline-none"
               />
-              <span className="text-xs text-[#D4CBBF] opacity-60">min</span>
+              <span className="text-xs text-[#D4CBBF] opacity-60">{t.common.minutes}</span>
               <button
                 onClick={() => onStartSession(customTimerMins * 60)}
                 className="px-4 py-1.5 bg-[#C5A059] text-[#0F0E0D] text-xs uppercase tracking-widest font-bold hover:bg-[#d6b26a] transition-colors"
               >
-                Iniciar
+                {t.labMode.startTimer}
               </button>
             </div>
           </div>
@@ -360,10 +377,14 @@ export const LabMode: React.FC<LabModeProps> = ({
             <div className="bg-[#1A1614] p-4 border border-[#C5A059] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="space-y-1">
                 <span className="text-[10px] uppercase font-mono tracking-widest text-[#C5A059]">
-                  STATUS DA SESSÃO
+                  {isEnglish ? 'SESSION STATUS' : 'STATUS DA SESSÃO'}
                 </span>
                 <p className="text-xs font-semibold text-[#D4CBBF]">
-                  {isFadingOut ? 'Atenuando som suavemente...' : isTimerRunning ? 'Sessão em andamento' : 'Sessão em pausa'}
+                  {isFadingOut
+                    ? (isEnglish ? 'Fading out gently...' : 'Atenuando som suavemente...')
+                    : isTimerRunning
+                    ? (isEnglish ? 'Session in progress' : 'Sessão em andamento')
+                    : (isEnglish ? 'Session paused' : 'Sessão em pausa')}
                 </p>
               </div>
               <div className="flex items-center gap-4">
@@ -374,7 +395,7 @@ export const LabMode: React.FC<LabModeProps> = ({
                   onClick={onStopTimer}
                   className="px-3.5 py-1.5 border border-[#C5A05944] hover:bg-[#C5A05922] text-[#C5A059] text-xs uppercase tracking-widest transition-colors"
                 >
-                  Cancelar
+                  {t.common.cancel}
                 </button>
               </div>
             </div>
@@ -382,7 +403,7 @@ export const LabMode: React.FC<LabModeProps> = ({
 
           {/* Fade description note */}
           <div className="p-3 bg-[#0F0E0D] border border-[#C5A05922] text-[11px] text-[#D4CBBF]/60 leading-relaxed font-mono">
-            // O som decai gradualmente nos últimos 4 segundos antes de atingir zero, com curva suave e harmonização ao silêncio.
+            // {t.labMode.fadeInOutNotice}
           </div>
         </div>
       )}
@@ -399,9 +420,9 @@ export const LabMode: React.FC<LabModeProps> = ({
             />
           </div>
           <div className="p-4 bg-[#141210] border border-[#C5A05922] text-xs text-[#D4CBBF]/70 space-y-1">
-            <h4 className="font-serif italic text-[#C5A059]">Visualizador Sagrado em Tempo Real</h4>
+            <h4 className="font-serif italic text-[#C5A059]">{t.labMode.audioVisualizerTitle}</h4>
             <p className="text-[11px] leading-relaxed">
-              O osciloscópio estéreo e o gerador da Espiral Áurea reagem diretamente à transformada de Fourier do barramento de áudio.
+              {t.labMode.audioVisualizerDesc}
             </p>
           </div>
         </div>
@@ -417,10 +438,10 @@ export const LabMode: React.FC<LabModeProps> = ({
         >
           <div className="flex items-center gap-2">
             <Activity className="w-3.5 h-3.5 text-[#C5A059]" />
-            <span>Diagnóstico do Motor de Áudio (Web Audio API)</span>
+            <span>{t.labMode.diagnosticsTitle}</span>
           </div>
           <div className="flex items-center gap-1.5 text-[#D4CBBF]/60 text-[9px]">
-            <span>{showDiagnostics ? 'Ocultar' : 'Ver Métricas'}</span>
+            <span>{showDiagnostics ? (isEnglish ? 'Hide' : 'Ocultar') : (isEnglish ? 'View Metrics' : 'Ver Métricas')}</span>
             {showDiagnostics ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
           </div>
         </button>
@@ -428,42 +449,42 @@ export const LabMode: React.FC<LabModeProps> = ({
         {showDiagnostics && diagnostics && (
           <div className="p-4 border-t border-[#C5A05922] bg-[#0F0E0D] text-[11px] font-mono grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 animate-fade-in">
             <div className="space-y-0.5">
-              <span className="text-[9px] uppercase tracking-wider text-[#D4CBBF]/60 block">Contexto</span>
+              <span className="text-[9px] uppercase tracking-wider text-[#D4CBBF]/60 block">{t.labMode.audioContextState}</span>
               <span className={`font-bold ${diagnostics.state === 'running' ? 'text-emerald-400' : 'text-[#C5A059]'}`}>
                 {diagnostics.state.toUpperCase()}
               </span>
             </div>
 
             <div className="space-y-0.5">
-              <span className="text-[9px] uppercase tracking-wider text-[#D4CBBF]/60 block">Taxa Amostragem</span>
+              <span className="text-[9px] uppercase tracking-wider text-[#D4CBBF]/60 block">{t.labMode.sampleRate}</span>
               <span className="text-[#D4CBBF] font-bold">
                 {diagnostics.sampleRate > 0 ? `${diagnostics.sampleRate} Hz` : 'N/A'}
               </span>
             </div>
 
             <div className="space-y-0.5">
-              <span className="text-[9px] uppercase tracking-wider text-[#D4CBBF]/60 block">Camadas Ativas</span>
+              <span className="text-[9px] uppercase tracking-wider text-[#D4CBBF]/60 block">{t.labMode.activeLayers}</span>
               <span className="text-[#C5A059] font-bold">
                 {diagnostics.activeLayersCount}
               </span>
             </div>
 
             <div className="space-y-0.5">
-              <span className="text-[9px] uppercase tracking-wider text-[#D4CBBF]/60 block">Nós Web Audio</span>
+              <span className="text-[9px] uppercase tracking-wider text-[#D4CBBF]/60 block">{t.labMode.activeOscillators}</span>
               <span className="text-[#C5A059] font-bold">
                 {diagnostics.activeNodesCount}
               </span>
             </div>
 
             <div className="space-y-0.5">
-              <span className="text-[9px] uppercase tracking-wider text-[#D4CBBF]/60 block">Ganho Master</span>
+              <span className="text-[9px] uppercase tracking-wider text-[#D4CBBF]/60 block">{t.mixer.masterFader}</span>
               <span className="text-[#D4CBBF] font-bold">
                 {Math.round(diagnostics.masterVolume * 100)}%
               </span>
             </div>
 
             <div className="space-y-0.5">
-              <span className="text-[9px] uppercase tracking-wider text-[#D4CBBF]/60 block">Anti-Clipping</span>
+              <span className="text-[9px] uppercase tracking-wider text-[#D4CBBF]/60 block">{t.mixer.antiClippingActive}</span>
               <span className="text-emerald-400 font-bold">
                 {diagnostics.limiterReductionDb > 0 ? `-${diagnostics.limiterReductionDb} dB` : '0.0 dB'}
               </span>
@@ -475,3 +496,4 @@ export const LabMode: React.FC<LabModeProps> = ({
     </div>
   );
 };
+

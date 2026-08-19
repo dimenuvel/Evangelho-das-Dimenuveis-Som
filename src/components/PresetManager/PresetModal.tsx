@@ -11,6 +11,7 @@ import {
   CheckCircle2,
   AlertCircle,
 } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface PresetModalProps {
   isOpen: boolean;
@@ -43,6 +44,7 @@ export const PresetModal: React.FC<PresetModalProps> = ({
   currentLayers,
   masterVolume,
 }) => {
+  const { t, getPresetText, isEnglish } = useLanguage();
   const [saveName, setSaveName] = useState('');
   const [saveDesc, setSaveDesc] = useState('');
   const [showSaveForm, setShowSaveForm] = useState(false);
@@ -60,7 +62,7 @@ export const PresetModal: React.FC<PresetModalProps> = ({
     setSaveName('');
     setSaveDesc('');
     setShowSaveForm(false);
-    setFeedback({ type: 'success', message: 'Predefinição pessoal salva localmente com sucesso!' });
+    setFeedback({ type: 'success', message: t.presets.savedSuccess });
     setTimeout(() => setFeedback(null), 3000);
   };
 
@@ -81,9 +83,12 @@ export const PresetModal: React.FC<PresetModalProps> = ({
       if (content) {
         const result = onImportJSON(content);
         if (result.success) {
-          setFeedback({ type: 'success', message: result.message });
+          const successMsg = isEnglish
+            ? `${result.count ? `${result.count} ` : ''}${t.presets.importSuccess}`
+            : result.message;
+          setFeedback({ type: 'success', message: successMsg });
         } else {
-          setFeedback({ type: 'error', message: result.message });
+          setFeedback({ type: 'error', message: isEnglish ? t.presets.invalidFileError : result.message });
         }
         setTimeout(() => setFeedback(null), 4000);
       }
@@ -110,10 +115,10 @@ export const PresetModal: React.FC<PresetModalProps> = ({
             </div>
             <div>
               <h3 className="text-lg font-serif italic text-[#C5A059]">
-                Memória de Predefinições
+                {t.presets.memoryTitle}
               </h3>
               <p className="text-[10px] uppercase tracking-wider text-[#D4CBBF] opacity-70">
-                Armazenamento local puro no navegador
+                {t.presets.memoryDesc}
               </p>
             </div>
           </div>
@@ -124,7 +129,7 @@ export const PresetModal: React.FC<PresetModalProps> = ({
               onClick={() => setShowSaveForm(!showSaveForm)}
               className="px-4 py-2 bg-[#C5A059] text-[#0F0E0D] text-xs uppercase tracking-widest font-bold hover:bg-[#d6b26a] transition-colors"
             >
-              {showSaveForm ? 'Cancelar' : '+ Salvar Atual'}
+              {showSaveForm ? t.presets.cancel : `+ ${t.presets.saveCurrent}`}
             </button>
 
             <button
@@ -132,7 +137,7 @@ export const PresetModal: React.FC<PresetModalProps> = ({
               onClick={onClose}
               className="text-xs font-mono uppercase tracking-widest text-[#D4CBBF]/70 hover:text-[#C5A059] bg-transparent transition-colors px-2 py-1"
             >
-              Fechar
+              {t.presets.close}
             </button>
           </div>
         </div>
@@ -155,20 +160,20 @@ export const PresetModal: React.FC<PresetModalProps> = ({
         {showSaveForm && (
           <form onSubmit={handleSave} className="p-4 bg-[#1A1614] border border-[#C5A05944] space-y-3 animate-fade-in">
             <h4 className="text-xs font-serif text-[#C5A059] uppercase tracking-wider">
-              Salvar Configuração Atual
+              {t.presets.saveCurrentConfig}
             </h4>
             <div className="space-y-2 text-xs">
               <input
                 type="text"
                 required
-                placeholder="Nome da predefinição (ex: Meu Pulso Theta 6Hz)"
+                placeholder={t.presets.presetNamePlaceholder}
                 value={saveName}
                 onChange={(e) => setSaveName(e.target.value)}
                 className="w-full bg-[#0F0E0D] text-[#D4CBBF] px-3 py-2 border border-[#C5A05933] outline-none focus:border-[#C5A059]"
               />
               <input
                 type="text"
-                placeholder="Descrição breve ou intenção contemplativa (opcional)"
+                placeholder={t.presets.presetDescPlaceholder}
                 value={saveDesc}
                 onChange={(e) => setSaveDesc(e.target.value)}
                 className="w-full bg-[#0F0E0D] text-[#D4CBBF] px-3 py-2 border border-[#C5A05933] outline-none focus:border-[#C5A059]"
@@ -180,13 +185,13 @@ export const PresetModal: React.FC<PresetModalProps> = ({
                 onClick={() => setShowSaveForm(false)}
                 className="px-3 py-1.5 border border-[#C5A05933] text-[#D4CBBF] opacity-70 hover:opacity-100 text-xs uppercase tracking-wider"
               >
-                Cancelar
+                {t.presets.cancel}
               </button>
               <button
                 type="submit"
                 className="px-4 py-1.5 bg-[#C5A059] text-[#0F0E0D] font-bold text-xs uppercase tracking-widest hover:bg-[#d6b26a]"
               >
-                Gravar Predefinição
+                {t.presets.recordPreset}
               </button>
             </div>
           </form>
@@ -196,11 +201,12 @@ export const PresetModal: React.FC<PresetModalProps> = ({
         {customPresets.length > 0 && (
           <div className="space-y-2.5">
             <span className="text-[10px] uppercase tracking-[0.2em] text-[#C5A059] font-serif font-bold">
-              Minhas Predefinições ({customPresets.length})
+              {t.presets.myPresets} ({customPresets.length})
             </span>
             <div className="space-y-2.5">
               {customPresets.map((preset) => {
                 const isActive = currentPresetId === preset.id;
+                const localized = getPresetText(preset.id, preset.name, preset.description, preset.dimenuvelId);
                 return (
                   <div
                     key={preset.id}
@@ -228,14 +234,14 @@ export const PresetModal: React.FC<PresetModalProps> = ({
                       ) : (
                         <div className="flex items-center gap-2 flex-wrap">
                           <h4 className="text-sm font-serif italic text-[#C5A059] font-bold">
-                            {preset.name}
+                            {localized.name}
                           </h4>
                           <span className="text-[10px] font-mono bg-[#0F0E0D] px-2 py-0.5 border border-[#C5A05933] text-[#D4CBBF]/70">
-                            {preset.layers.length} camadas
+                            {preset.layers.length} {t.presets.layersCount}
                           </span>
                           {isActive && (
                             <span className="text-[9px] font-mono uppercase tracking-widest text-[#0F0E0D] bg-[#C5A059] px-1.5 py-0.5 font-bold">
-                              Ativo
+                              {t.presets.active}
                             </span>
                           )}
                           <button
@@ -244,15 +250,15 @@ export const PresetModal: React.FC<PresetModalProps> = ({
                               setEditName(preset.name);
                             }}
                             className="text-[#D4CBBF]/40 hover:text-[#C5A059] transition-colors p-0.5"
-                            title="Renomear"
+                            title={t.presets.rename}
                           >
                             <Edit2 className="w-3 h-3" />
                           </button>
                         </div>
                       )}
-                      {preset.description && (
+                      {localized.description && (
                         <p className="text-xs text-[#D4CBBF]/85 leading-relaxed break-words whitespace-normal">
-                          {preset.description}
+                          {localized.description}
                         </p>
                       )}
                     </div>
@@ -269,12 +275,16 @@ export const PresetModal: React.FC<PresetModalProps> = ({
                             : 'border border-[#C5A059] text-[#C5A059] hover:bg-[#C5A059] hover:text-[#0F0E0D]'
                         }`}
                       >
-                        {isActive ? 'Recarregar' : 'Carregar'}
+                        {isActive ? t.presets.reload : t.presets.load}
                       </button>
                       <button
-                        onClick={() => onDeletePreset(preset.id)}
+                        onClick={() => {
+                          if (window.confirm(isEnglish ? `Are you sure you want to delete "${localized.name}"?` : `Tem certeza que deseja excluir "${localized.name}"?`)) {
+                            onDeletePreset(preset.id);
+                          }
+                        }}
                         className="p-1.5 border border-red-900/40 text-red-400 hover:bg-red-950/60 transition-colors"
-                        title="Excluir predefinição"
+                        title={t.presets.deletePreset}
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -289,11 +299,12 @@ export const PresetModal: React.FC<PresetModalProps> = ({
         {/* 2. Canonical Seven Dimenúveis */}
         <div className="space-y-2.5">
           <span className="text-[10px] uppercase tracking-[0.2em] text-[#C5A059] font-serif font-bold">
-            As Sete Dimenúveis Canônicas
+            {t.presets.canonicalTitle}
           </span>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {canonicalPresets.map((preset) => {
               const isActive = currentPresetId === preset.id;
+              const localized = getPresetText(preset.id, preset.name, preset.description, preset.dimenuvelId);
               return (
                 <div
                   key={preset.id}
@@ -306,21 +317,21 @@ export const PresetModal: React.FC<PresetModalProps> = ({
                   <div className="space-y-2">
                     <div className="flex items-center justify-between gap-2">
                       <h4 className="font-serif italic text-sm text-[#C5A059] font-semibold">
-                        {preset.name}
+                        {localized.name}
                       </h4>
                       {isActive && (
                         <span className="text-[9px] font-mono uppercase tracking-widest text-[#0F0E0D] bg-[#C5A059] px-1.5 py-0.5 font-bold shrink-0">
-                          Ativo
+                          {t.presets.active}
                         </span>
                       )}
                     </div>
                     <p className="text-xs text-[#D4CBBF]/85 leading-relaxed break-words whitespace-normal">
-                      {preset.description}
+                      {localized.description}
                     </p>
                   </div>
 
                   <div className="flex items-center justify-between pt-2.5 border-t border-[#C5A05915] text-[10px] font-mono text-[#D4CBBF]/60">
-                    <span>{preset.layers.length} camadas sonoras</span>
+                    <span>{preset.layers.length} {t.presets.layersCount}</span>
                     <button
                       onClick={() => {
                         onLoadPreset(preset);
@@ -332,7 +343,7 @@ export const PresetModal: React.FC<PresetModalProps> = ({
                           : 'bg-[#0F0E0D] border border-[#C5A05944] text-[#C5A059] hover:bg-[#C5A059] hover:text-[#0F0E0D]'
                       }`}
                     >
-                      {isActive ? 'Recarregar' : 'Carregar'}
+                      {isActive ? t.presets.reload : t.presets.load}
                     </button>
                   </div>
                 </div>
@@ -344,11 +355,12 @@ export const PresetModal: React.FC<PresetModalProps> = ({
         {/* 3. Contemplative Soundscapes */}
         <div className="space-y-2.5">
           <span className="text-[10px] uppercase tracking-[0.2em] text-[#C5A059] font-serif font-bold">
-            Padrões Contemplativos Especiais
+            {t.presets.contemplativeTitle}
           </span>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {contemplativePresets.map((preset) => {
               const isActive = currentPresetId === preset.id;
+              const localized = getPresetText(preset.id, preset.name, preset.description, preset.dimenuvelId);
               return (
                 <div
                   key={preset.id}
@@ -361,21 +373,21 @@ export const PresetModal: React.FC<PresetModalProps> = ({
                   <div className="space-y-2">
                     <div className="flex items-center justify-between gap-2">
                       <h4 className="font-serif italic text-sm text-[#C5A059] font-semibold">
-                        {preset.name}
+                        {localized.name}
                       </h4>
                       {isActive && (
                         <span className="text-[9px] font-mono uppercase tracking-widest text-[#0F0E0D] bg-[#C5A059] px-1.5 py-0.5 font-bold shrink-0">
-                          Ativo
+                          {t.presets.active}
                         </span>
                       )}
                     </div>
                     <p className="text-xs text-[#D4CBBF]/85 leading-relaxed break-words whitespace-normal">
-                      {preset.description}
+                      {localized.description}
                     </p>
                   </div>
 
                   <div className="flex items-center justify-between pt-2.5 border-t border-[#C5A05915] text-[10px] font-mono text-[#D4CBBF]/60">
-                    <span>{preset.layers.length} camadas sonoras</span>
+                    <span>{preset.layers.length} {t.presets.layersCount}</span>
                     <button
                       onClick={() => {
                         onLoadPreset(preset);
@@ -387,7 +399,7 @@ export const PresetModal: React.FC<PresetModalProps> = ({
                           : 'bg-[#0F0E0D] border border-[#C5A05944] text-[#C5A059] hover:bg-[#C5A059] hover:text-[#0F0E0D]'
                       }`}
                     >
-                      {isActive ? 'Recarregar' : 'Carregar'}
+                      {isActive ? t.presets.reload : t.presets.load}
                     </button>
                   </div>
                 </div>
@@ -403,20 +415,20 @@ export const PresetModal: React.FC<PresetModalProps> = ({
             <button
               onClick={onExportJSON}
               className="flex items-center gap-1.5 px-3 py-1.5 bg-[#1A1614] text-[#D4CBBF] hover:text-[#C5A059] border border-[#C5A05933] hover:border-[#C5A059] text-[10px] uppercase tracking-wider transition-colors"
-              title="Baixar arquivo JSON com todas as predefinições"
+              title={isEnglish ? 'Download JSON file with all presets' : 'Baixar arquivo JSON com todas as predefinições'}
             >
               <Download className="w-3.5 h-3.5 text-[#C5A059]" />
-              <span>Exportar JSON</span>
+              <span>{t.presets.exportJSON}</span>
             </button>
 
             {/* Import JSON */}
             <button
               onClick={() => fileInputRef.current?.click()}
               className="flex items-center gap-1.5 px-3 py-1.5 bg-[#1A1614] text-[#D4CBBF] hover:text-[#C5A059] border border-[#C5A05933] hover:border-[#C5A059] text-[10px] uppercase tracking-wider transition-colors"
-              title="Carregar predefinições de arquivo JSON"
+              title={isEnglish ? 'Load presets from JSON file' : 'Carregar predefinições de arquivo JSON'}
             >
               <Upload className="w-3.5 h-3.5 text-[#C5A059]" />
-              <span>Importar JSON</span>
+              <span>{t.presets.importJSON}</span>
             </button>
             <input
               ref={fileInputRef}
@@ -430,16 +442,16 @@ export const PresetModal: React.FC<PresetModalProps> = ({
           {/* Reset Defaults */}
           <button
             onClick={() => {
-              if (window.confirm('Deseja restaurar as predefinições de fábrica? Suas predefinições personalizadas serão limpas.')) {
+              if (window.confirm(t.presets.restoreConfirm)) {
                 onResetDefaults();
-                setFeedback({ type: 'success', message: 'Predefinições restauradas para o padrão!' });
+                setFeedback({ type: 'success', message: t.presets.restoredSuccess });
                 setTimeout(() => setFeedback(null), 3000);
               }
             }}
             className="flex items-center gap-1 text-[10px] uppercase tracking-wider text-[#D4CBBF]/60 hover:text-[#C5A059] transition-colors"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            <span>Restaurar Padrões</span>
+            <span>{t.presets.restoreDefaults}</span>
           </button>
         </div>
 
@@ -447,3 +459,4 @@ export const PresetModal: React.FC<PresetModalProps> = ({
     </div>
   );
 };
+

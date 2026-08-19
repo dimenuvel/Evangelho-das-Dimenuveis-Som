@@ -5,6 +5,7 @@ import { SoundPreset, AudioLayer, VisualizerMode } from '../../types';
 import { calculateBeatDifference, getBeatBandInfo } from '../../audio/audioMath';
 import { SpiralVisualizer } from '../Visualizer/SpiralVisualizer';
 import { useTheme } from '../../context/ThemeContext';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface SimpleModeProps {
   currentPreset: SoundPreset;
@@ -32,17 +33,6 @@ interface SimpleModeProps {
   onDismissCompleted: () => void;
 }
 
-const TIMER_PRESETS = [
-  { label: 'Contínuo', sec: 0 },
-  { label: '5 min', sec: 300 },
-  { label: '10 min', sec: 600 },
-  { label: '15 min', sec: 900 },
-  { label: '20 min', sec: 1200 },
-  { label: '30 min', sec: 1800 },
-  { label: '45 min', sec: 2700 },
-  { label: '60 min', sec: 3600 },
-];
-
 export const SimpleMode: React.FC<SimpleModeProps> = ({
   currentPreset,
   layers,
@@ -68,15 +58,38 @@ export const SimpleMode: React.FC<SimpleModeProps> = ({
   onDismissCompleted,
 }) => {
   const { isLight } = useTheme();
+  const { t, getDimenuvelText, getPresetText, isEnglish } = useLanguage();
   const [selectedTimerSec, setSelectedTimerSec] = useState<number>(0);
+
+  const timerPresets = [
+    { label: t.common.continuous, sec: 0 },
+    { label: `5 ${t.common.minutes}`, sec: 300 },
+    { label: `10 ${t.common.minutes}`, sec: 600 },
+    { label: `15 ${t.common.minutes}`, sec: 900 },
+    { label: `20 ${t.common.minutes}`, sec: 1200 },
+    { label: `30 ${t.common.minutes}`, sec: 1800 },
+    { label: `45 ${t.common.minutes}`, sec: 2700 },
+    { label: `60 ${t.common.minutes}`, sec: 3600 },
+  ];
 
   // Active Dimenúvel info if linked
   const activeDimenuvel = DIMENUVEIS_INFO.find((d) => d.id === currentPreset.dimenuvelId) || DIMENUVEIS_INFO[0];
+  const activeDimenuvelTexts = getDimenuvelText(activeDimenuvel.id);
+  const activePresetTexts = getPresetText(currentPreset.id, currentPreset.name, currentPreset.description, currentPreset.dimenuvelId);
 
   // Calculate primary binaural difference from active binaural layers
   const primaryBinaural = layers.find((l) => l.type === 'binaural' && l.enabled);
   const beatDiff = primaryBinaural ? calculateBeatDifference(primaryBinaural.leftFreq, primaryBinaural.rightFreq) : 0;
   const beatInfo = getBeatBandInfo(beatDiff);
+
+  const getLocalizedBandName = () => {
+    if (beatDiff === 0) return t.bands.unison.name;
+    if (beatDiff < 4) return t.bands.delta.name;
+    if (beatDiff < 8) return t.bands.theta.name;
+    if (beatDiff < 14) return t.bands.alpha.name;
+    if (beatDiff < 30) return t.bands.beta.name;
+    return t.bands.gamma.name;
+  };
 
   const handleTimerSelect = (sec: number) => {
     setSelectedTimerSec(sec);
@@ -110,8 +123,8 @@ export const SimpleMode: React.FC<SimpleModeProps> = ({
               <CheckCircle2 className="w-4 h-4" />
             </div>
             <div>
-              <p className="font-serif font-bold text-[#C5A059] uppercase tracking-wider">Sessão Contemplativa Concluída</p>
-              <p className="text-[#D4CBBF]/80 text-xs">O som foi atenuado suavemente. Permaneça no silêncio da presença.</p>
+              <p className="font-serif font-bold text-[#C5A059] uppercase tracking-wider">{t.simpleMode.sessionCompletedTitle}</p>
+              <p className="text-[#D4CBBF]/80 text-xs">{t.simpleMode.sessionCompletedDesc}</p>
             </div>
           </div>
           <button
@@ -119,7 +132,7 @@ export const SimpleMode: React.FC<SimpleModeProps> = ({
             onClick={onDismissCompleted}
             className="px-4 py-1.5 border border-[#C5A059] text-[#C5A059] hover:bg-[#C5A05922] text-xs uppercase tracking-widest transition-colors"
           >
-            Fechar
+            {t.common.close}
           </button>
         </div>
       )}
@@ -128,10 +141,10 @@ export const SimpleMode: React.FC<SimpleModeProps> = ({
       <div className="space-y-2.5">
         <div className="flex items-center justify-between px-1">
           <span className="text-[10px] uppercase tracking-[0.25em] text-[#C5A059] font-semibold opacity-90">
-            As Sete Dimenúveis
+            {t.simpleMode.sevenDimenuveis}
           </span>
           <span className="text-[10px] uppercase tracking-[0.15em] text-[#D4CBBF] opacity-40">
-            Arquétipos de Atenção
+            {t.simpleMode.archetypesOfAttention}
           </span>
         </div>
 
@@ -139,6 +152,7 @@ export const SimpleMode: React.FC<SimpleModeProps> = ({
           {DIMENUVEIS_INFO.map((dim, idx) => {
             const isSelected = currentPreset.dimenuvelId === dim.id;
             const matchingPreset = CANONICAL_PRESETS.find((p) => p.dimenuvelId === dim.id);
+            const localizedDim = getDimenuvelText(dim.id);
 
             return (
               <button
@@ -166,7 +180,7 @@ export const SimpleMode: React.FC<SimpleModeProps> = ({
 
                 <div>
                   <h4 className="text-xs font-serif font-bold text-[#D4CBBF] group-hover:text-[#FFFFFF] tracking-wide">
-                    {dim.name}
+                    {localizedDim.name}
                   </h4>
                   <p className="text-[10px] font-mono text-[#C5A059] opacity-70 mt-0.5">
                     {dim.suggestedBaseFreq} Hz
@@ -195,37 +209,37 @@ export const SimpleMode: React.FC<SimpleModeProps> = ({
               <div className="min-w-0">
                 <span className="text-[10px] uppercase tracking-[0.25em] text-[#C5A059] opacity-80 block">
                   {currentPreset.category === 'canonical' && currentPreset.dimenuvelId
-                    ? `Dimenúvel ${activeDimenuvel.id} • ${activeDimenuvel.subtitle}`
+                    ? `${activeDimenuvelTexts.subtitle}`
                     : currentPreset.category === 'contemplative'
-                    ? 'Padrão Contemplativo Especial'
-                    : 'Predefinição Personalizada'}
+                    ? (isEnglish ? 'Special Contemplative Pattern' : 'Padrão Contemplativo Especial')
+                    : (isEnglish ? 'Custom Preset' : 'Predefinição Personalizada')}
                 </span>
                 <h3 className="text-xl sm:text-2xl font-serif italic text-[#C5A059] tracking-wide leading-tight">
-                  {currentPreset.name}
+                  {activePresetTexts.name}
                 </h3>
               </div>
             </div>
             <p className="text-xs sm:text-sm text-[#D4CBBF]/85 leading-relaxed max-w-2xl">
-              {currentPreset.description || activeDimenuvel.description}
+              {activePresetTexts.description || activeDimenuvelTexts.description}
             </p>
           </div>
 
           {/* Acoustic Frequency Metric Capsule */}
           <div className="bg-[#1A1614] p-4 border border-[#C5A05933] shrink-0 space-y-1.5 min-w-[220px]">
             <div className="flex items-center justify-between text-xs">
-              <span className="text-[10px] uppercase tracking-widest text-[#D4CBBF] opacity-60">Frequência Base:</span>
+              <span className="text-[10px] uppercase tracking-widest text-[#D4CBBF] opacity-60">{t.simpleMode.baseTone}:</span>
               <span className="font-mono font-bold text-[#C5A059]">
                 {primaryBinaural ? `${primaryBinaural.leftFreq} Hz` : `${activeDimenuvel.suggestedBaseFreq} Hz`}
               </span>
             </div>
             <div className="flex items-center justify-between text-xs">
-              <span className="text-[10px] uppercase tracking-widest text-[#D4CBBF] opacity-60">Batimento Binaural:</span>
+              <span className="text-[10px] uppercase tracking-widest text-[#D4CBBF] opacity-60">{t.simpleMode.binauralPulse}:</span>
               <span className="font-mono font-bold text-[#C5A059]">
-                {beatDiff > 0 ? `${beatDiff.toFixed(1)} Hz` : 'Uníssono'}
+                {beatDiff > 0 ? `${beatDiff.toFixed(1)} Hz` : t.simpleMode.unison}
               </span>
             </div>
             <div className="pt-1.5 border-t border-[#C5A05922] text-[10px] font-mono uppercase tracking-widest text-[#D4CBBF] opacity-70">
-              {beatInfo.rhythmBand}
+              {getLocalizedBandName()}
             </div>
           </div>
         </div>
@@ -244,8 +258,8 @@ export const SimpleMode: React.FC<SimpleModeProps> = ({
         {/* 4. Layer Architecture Summary Strips */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.2em] text-[#C5A059] opacity-80">
-            <span>Estrutura Harmônica das Camadas</span>
-            <span>{layers.filter(l => l.enabled).length} Camadas Ativas</span>
+            <span>{isEnglish ? 'Layer Harmonic Structure' : 'Estrutura Harmônica das Camadas'}</span>
+            <span>{layers.filter(l => l.enabled).length} {t.labMode.activeLayers}</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
@@ -283,30 +297,30 @@ export const SimpleMode: React.FC<SimpleModeProps> = ({
             <div className="flex items-center justify-between text-xs">
               <span className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-[#C5A059] font-medium">
                 <Clock className="w-3.5 h-3.5 text-[#C5A059]" />
-                <span>Duração da Prática</span>
+                <span>{t.simpleMode.contemplativeTimer}</span>
               </span>
               {selectedDuration > 0 && (
                 <span className="font-mono text-xs font-bold text-[#C5A059] tracking-wider">
-                  {isFadingOut ? 'ATENUANDO SOM...' : formattedTime}
+                  {isFadingOut ? (isEnglish ? 'FADING OUT...' : 'ATENUANDO SOM...') : formattedTime}
                 </span>
               )}
             </div>
 
             <div className="flex flex-wrap gap-2">
-              {TIMER_PRESETS.map((t) => {
-                const isActive = selectedTimerSec === t.sec;
+              {timerPresets.map((timerObj) => {
+                const isActive = selectedTimerSec === timerObj.sec;
                 return (
                   <button
-                    key={t.sec}
-                    id={`timer-preset-${t.sec}-btn`}
-                    onClick={() => handleTimerSelect(t.sec)}
+                    key={timerObj.sec}
+                    id={`timer-preset-${timerObj.sec}-btn`}
+                    onClick={() => handleTimerSelect(timerObj.sec)}
                     className={`px-3.5 py-1.5 text-[11px] uppercase tracking-wider font-medium transition-all ${
                       isActive
                         ? 'bg-[#C5A059] text-[#0F0E0D] font-bold shadow-sm'
                         : 'border border-[#C5A05933] text-[#D4CBBF] hover:border-[#C5A059] hover:bg-[#C5A05911]'
                     }`}
                   >
-                    {t.label}
+                    {timerObj.label}
                   </button>
                 );
               })}
@@ -330,12 +344,12 @@ export const SimpleMode: React.FC<SimpleModeProps> = ({
                 {isPlaying ? (
                   <>
                     <Pause className="w-4 h-4 fill-current" />
-                    <span>Pausar Prática</span>
+                    <span>{t.simpleMode.pauseSession}</span>
                   </>
                 ) : (
                   <>
                     <Play className="w-4 h-4 fill-current" />
-                    <span>Iniciar Contemplação</span>
+                    <span>{t.simpleMode.startSession}</span>
                   </>
                 )}
               </button>
@@ -344,7 +358,7 @@ export const SimpleMode: React.FC<SimpleModeProps> = ({
                 <button
                   id="simple-mode-stop-btn"
                   onClick={onStop}
-                  title="Parar e Reiniciar"
+                  title={t.simpleMode.stopSession}
                   className="p-3 border border-[#C5A05944] text-[#C5A059] hover:bg-[#C5A05922] transition-colors"
                 >
                   <Square className="w-4 h-4" />
@@ -363,7 +377,7 @@ export const SimpleMode: React.FC<SimpleModeProps> = ({
                 step="0.01"
                 value={masterVolume}
                 onChange={(e) => onMasterVolumeChange(parseFloat(e.target.value))}
-                aria-label="Volume Geral Master"
+                aria-label={t.header.masterVolume}
                 className="w-24 sm:w-28 accent-[#C5A059] cursor-pointer"
               />
               <span className="text-xs font-mono text-[#C5A059] w-8 text-right">
@@ -378,14 +392,14 @@ export const SimpleMode: React.FC<SimpleModeProps> = ({
         {/* 6. Switch to Advanced Laboratory Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
           <div className="text-[11px] text-[#D4CBBF] opacity-60">
-            Deseja modular frequências independentes, sintetizar harmônicos ou configurar LFO?
+            {t.simpleMode.expandToLabNotice}
           </div>
           <button
             id="go-to-lab-btn"
             onClick={onSwitchToLab}
             className="flex items-center gap-2 px-4 py-2 border border-[#C5A059] text-[#C5A059] text-xs uppercase tracking-widest hover:bg-[#C5A05911] transition-colors group self-start sm:self-auto"
           >
-            <span>Laboratório Avançado</span>
+            <span>{t.simpleMode.customizeInLab}</span>
             <ChevronRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
           </button>
         </div>
@@ -395,13 +409,14 @@ export const SimpleMode: React.FC<SimpleModeProps> = ({
       {/* Contemplative Focus Footer Quote */}
       <div className="p-4 bg-[#141210] border border-[#C5A05922] text-center text-xs space-y-1">
         <p className="font-serif italic text-[#C5A059]">
-          "{activeDimenuvel.contemplativeFocus}"
+          "{activeDimenuvelTexts.contemplativeFocus}"
         </p>
         <p className="text-[9px] uppercase tracking-[0.2em] text-[#D4CBBF] opacity-40">
-          Evangelho das Dimenúveis • O som como instrumento de observação e presença
+          {t.header.appSubtitle} • {isEnglish ? 'Sound as an instrument of observation and presence' : 'O som como instrumento de observação e presença'}
         </p>
       </div>
 
     </div>
   );
 };
+

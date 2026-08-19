@@ -11,8 +11,8 @@ import {
   Radio,
   Eye,
   Layers,
-  ArrowRight,
 } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface SplashScreenTourProps {
   isOpen: boolean;
@@ -20,135 +20,121 @@ interface SplashScreenTourProps {
   onSelectMode?: (mode: 'simple' | 'lab') => void;
 }
 
-interface TourStep {
-  id: number;
-  tag: string;
-  title: string;
-  subtitle: string;
-  description: string;
-  points: { icon: React.ReactNode; title: string; desc: string }[];
-  highlight?: string;
-}
-
-const TOUR_STEPS: TourStep[] = [
-  {
-    id: 1,
-    tag: 'Introdução & Propósito',
-    title: 'Evangelho das Dimenúveis',
-    subtitle: 'Laboratório de Som & Prática Contemplativa',
-    description:
-      'Um espaço acústico projetado para cultivar presença consciente, concentração profunda e serenidade através de frequências harmônicas, batimentos binaurais e geometria sonora.',
-    points: [
-      {
-        icon: <Sparkles className="w-4 h-4 text-[#C5A059]" />,
-        title: 'Áudio em Tempo Real',
-        desc: 'Síntese sonora sintetizada diretamente pelo navegador via Web Audio API, sem streaming nem latência.',
-      },
-      {
-        icon: <ShieldCheck className="w-4 h-4 text-[#C5A059]" />,
-        title: 'Privacidade Total',
-        desc: '100% local e privado — suas predefinições e sessões ficam armazenadas exclusivamente no seu dispositivo.',
-      },
-      {
-        icon: <Headphones className="w-4 h-4 text-[#C5A059]" />,
-        title: 'Isolamento Estéreo',
-        desc: 'Utilize fones de ouvido para experienciar a separação física essencial dos batimentos binaurais.',
-      },
-    ],
-    highlight: 'Ferramenta experimental para atenção e contemplação pessoal.',
-  },
-  {
-    id: 2,
-    tag: 'Navegação Simples',
-    title: 'Modo Simples',
-    subtitle: 'As Sete Dimenúveis Canônicas',
-    description:
-      'Acesse predefinições cuidadosamente afinadas com frequências base de 108Hz a 963Hz e pulsos binaurais dedicados para diferentes estados de atenção.',
-    points: [
-      {
-        icon: <Compass className="w-4 h-4 text-[#C5A059]" />,
-        title: '7 Estados Contemplativos',
-        desc: 'Desde a Respiração Fundamental (108Hz) e Foco Lúcido (432Hz) até a Consciência Cósmica (963Hz).',
-      },
-      {
-        icon: <Radio className="w-4 h-4 text-[#C5A059]" />,
-        title: 'Temporizador Contemplativo',
-        desc: 'Sessões programáveis de 5 a 60 minutos com transição suave (Fade In/Out) e sino meditativo de encerramento.',
-      },
-      {
-        icon: <Eye className="w-4 h-4 text-[#C5A059]" />,
-        title: 'Visualizadores Harmônicos',
-        desc: 'Espiral Áurea (φ), Círculos Sagrados do Padrão e Espelho de Fase Estéreo com modo tela cheia.',
-      },
-    ],
-    highlight: 'Ideal para sessões imediatas de meditação, foco e trabalho profundo.',
-  },
-  {
-    id: 3,
-    tag: 'Síntese Profissional',
-    title: 'Modo Laboratório',
-    subtitle: 'Mixer Multicamadas & Design Acústico',
-    description:
-      'Crie atmosferas personalizadas combinando múltiplos geradores sonoros independentes com afinação micrométrica e balanceamento estéreo.',
-    points: [
-      {
-        icon: <Layers className="w-4 h-4 text-[#C5A059]" />,
-        title: 'Múltiplas Camadas',
-        desc: 'Sobreponha tons Binaurais, Isocrônicos, Frequências Solfeggio e Ruídos Acústicos (Rosa, Marrom, Chuva, Vento).',
-      },
-      {
-        icon: <Sliders className="w-4 h-4 text-[#C5A059]" />,
-        title: 'Console de Mixagem',
-        desc: 'Controles individuais de volume, pan estéreo (L/R), Solo, Mute, VU meters e limitador suave anti-clipping.',
-      },
-      {
-        icon: <Sparkles className="w-4 h-4 text-[#C5A059]" />,
-        title: 'Memória & Exportação',
-        desc: 'Salve suas próprias predefinições e exporte/importe arquivos JSON com sua biblioteca de sons.',
-      },
-    ],
-    highlight: 'Liberdade total para pesquisadores, meditadores e produtores sonoros.',
-  },
-  {
-    id: 4,
-    tag: 'Diretrizes & Ética',
-    title: 'Presença & Uso Consciente',
-    subtitle: 'Abidar, Observar e Retornar ao Centro',
-    description:
-      'O Evangelho das Dimenúveis convida você a "Abidar" — permanecer e habitar a presença consciente sem julgamentos, deixando o som apoiar sua quietude.',
-    points: [
-      {
-        icon: <Headphones className="w-4 h-4 text-[#C5A059]" />,
-        title: 'Volume Confortável',
-        desc: 'Mantenha o ganho em nível suave e confortável. O efeito binaural atua pela afinação e não pela intensidade.',
-      },
-      {
-        icon: <ShieldCheck className="w-4 h-4 text-[#C5A059]" />,
-        title: 'Aviso Experimental',
-        desc: 'As frequências são contemplativas e artísticas; não substituem acompanhamento médico ou terapêutico.',
-      },
-      {
-        icon: <Compass className="w-4 h-4 text-[#C5A059]" />,
-        title: 'Explore no Seu Ritmo',
-        desc: 'Alterne entre os modos Simples e Laboratório conforme sua necessidade no cabeçalho superior.',
-      },
-    ],
-    highlight: 'Você está pronto para iniciar sua experiência sonora.',
-  },
-];
-
 export const SplashScreenTour: React.FC<SplashScreenTourProps> = ({
   isOpen,
   onClose,
-  onSelectMode,
 }) => {
+  const { t, isEnglish } = useLanguage();
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
 
   if (!isOpen) return null;
 
-  const currentStep = TOUR_STEPS[currentStepIndex];
+  const tourSteps = [
+    {
+      id: 1,
+      tag: t.tour.steps.step1Tag,
+      title: t.tour.steps.step1Title,
+      subtitle: t.tour.steps.step1Subtitle,
+      description: t.tour.steps.step1Desc,
+      points: [
+        {
+          icon: <Sparkles className="w-4 h-4 text-[#C5A059]" />,
+          title: t.tour.steps.step1Point1Title,
+          desc: t.tour.steps.step1Point1Desc,
+        },
+        {
+          icon: <ShieldCheck className="w-4 h-4 text-[#C5A059]" />,
+          title: t.tour.steps.step1Point2Title,
+          desc: t.tour.steps.step1Point2Desc,
+        },
+        {
+          icon: <Headphones className="w-4 h-4 text-[#C5A059]" />,
+          title: t.tour.steps.step1Point3Title,
+          desc: t.tour.steps.step1Point3Desc,
+        },
+      ],
+      highlight: t.tour.steps.step1Highlight,
+    },
+    {
+      id: 2,
+      tag: t.tour.steps.step2Tag,
+      title: t.tour.steps.step2Title,
+      subtitle: t.tour.steps.step2Subtitle,
+      description: t.tour.steps.step2Desc,
+      points: [
+        {
+          icon: <Compass className="w-4 h-4 text-[#C5A059]" />,
+          title: t.tour.steps.step2Point1Title,
+          desc: t.tour.steps.step2Point1Desc,
+        },
+        {
+          icon: <Radio className="w-4 h-4 text-[#C5A059]" />,
+          title: t.tour.steps.step2Point2Title,
+          desc: t.tour.steps.step2Point2Desc,
+        },
+        {
+          icon: <Eye className="w-4 h-4 text-[#C5A059]" />,
+          title: t.tour.steps.step2Point3Title,
+          desc: t.tour.steps.step2Point3Desc,
+        },
+      ],
+      highlight: t.tour.steps.step2Highlight,
+    },
+    {
+      id: 3,
+      tag: t.tour.steps.step3Tag,
+      title: t.tour.steps.step3Title,
+      subtitle: t.tour.steps.step3Subtitle,
+      description: t.tour.steps.step3Desc,
+      points: [
+        {
+          icon: <Layers className="w-4 h-4 text-[#C5A059]" />,
+          title: t.tour.steps.step3Point1Title,
+          desc: t.tour.steps.step3Point1Desc,
+        },
+        {
+          icon: <Sliders className="w-4 h-4 text-[#C5A059]" />,
+          title: t.tour.steps.step3Point2Title,
+          desc: t.tour.steps.step3Point2Desc,
+        },
+        {
+          icon: <Sparkles className="w-4 h-4 text-[#C5A059]" />,
+          title: t.tour.steps.step3Point3Title,
+          desc: t.tour.steps.step3Point3Desc,
+        },
+      ],
+      highlight: t.tour.steps.step3Highlight,
+    },
+    {
+      id: 4,
+      tag: t.tour.steps.step4Tag,
+      title: t.tour.steps.step4Title,
+      subtitle: t.tour.steps.step4Subtitle,
+      description: t.tour.steps.step4Desc,
+      points: [
+        {
+          icon: <Headphones className="w-4 h-4 text-[#C5A059]" />,
+          title: t.tour.steps.step4Point1Title,
+          desc: t.tour.steps.step4Point1Desc,
+        },
+        {
+          icon: <ShieldCheck className="w-4 h-4 text-[#C5A059]" />,
+          title: t.tour.steps.step4Point2Title,
+          desc: t.tour.steps.step4Point2Desc,
+        },
+        {
+          icon: <Compass className="w-4 h-4 text-[#C5A059]" />,
+          title: t.tour.steps.step4Point3Title,
+          desc: t.tour.steps.step4Point3Desc,
+        },
+      ],
+      highlight: t.tour.steps.step4Highlight,
+    },
+  ];
+
+  const currentStep = tourSteps[currentStepIndex];
   const isFirstStep = currentStepIndex === 0;
-  const isLastStep = currentStepIndex === TOUR_STEPS.length - 1;
+  const isLastStep = currentStepIndex === tourSteps.length - 1;
 
   const handleNext = () => {
     if (isLastStep) {
@@ -193,10 +179,10 @@ export const SplashScreenTour: React.FC<SplashScreenTourProps> = ({
             </div>
             <div>
               <span className="text-[9px] uppercase tracking-[0.25em] text-[#C5A059] font-mono block">
-                Guia de Boas-Vindas
+                {isEnglish ? 'Welcome Guide' : 'Guia de Boas-Vindas'}
               </span>
               <span className="text-xs font-serif italic text-[#D4CBBF]">
-                Passo {currentStepIndex + 1} de {TOUR_STEPS.length}
+                {isEnglish ? `Step ${currentStepIndex + 1} of ${tourSteps.length}` : `Passo ${currentStepIndex + 1} de ${tourSteps.length}`}
               </span>
             </div>
           </div>
@@ -207,15 +193,15 @@ export const SplashScreenTour: React.FC<SplashScreenTourProps> = ({
               onClick={handleSkip}
               className="text-[10px] uppercase tracking-widest text-[#D4CBBF] opacity-60 hover:opacity-100 hover:text-[#C5A059] px-2.5 py-1 transition-all"
             >
-              Pular Introdução
+              {t.tour.skip}
             </button>
             <button
               id="close-tour-modal-btn"
               onClick={handleSkip}
               className="text-xs font-mono uppercase tracking-widest text-[#D4CBBF]/70 hover:text-[#C5A059] bg-transparent transition-colors px-2 py-1"
-              title="Fechar Guia"
+              title={isEnglish ? 'Close Guide' : 'Fechar Guia'}
             >
-              Fechar
+              {isEnglish ? 'Close' : 'Fechar'}
             </button>
           </div>
         </div>
@@ -278,11 +264,11 @@ export const SplashScreenTour: React.FC<SplashScreenTourProps> = ({
           
           {/* Step Indicator Dots */}
           <div className="flex items-center gap-2">
-            {TOUR_STEPS.map((step, idx) => (
+            {tourSteps.map((step, idx) => (
               <button
                 key={step.id}
                 onClick={() => handleGoToStep(idx)}
-                aria-label={`Ir para passo ${idx + 1}`}
+                aria-label={`Step ${idx + 1}`}
                 className={`transition-all ${
                   idx === currentStepIndex
                     ? 'w-6 h-1.5 bg-[#C5A059]'
@@ -301,7 +287,7 @@ export const SplashScreenTour: React.FC<SplashScreenTourProps> = ({
                 className="px-4 py-2 border border-[#C5A05933] text-[#D4CBBF] hover:text-[#C5A059] hover:border-[#C5A059] text-xs uppercase tracking-widest font-medium transition-colors flex items-center gap-1.5"
               >
                 <ChevronLeft className="w-3.5 h-3.5" />
-                <span>Anterior</span>
+                <span>{t.tour.prev}</span>
               </button>
             )}
 
@@ -312,12 +298,12 @@ export const SplashScreenTour: React.FC<SplashScreenTourProps> = ({
             >
               {isLastStep ? (
                 <>
-                  <span>Entrar no Laboratório</span>
+                  <span>{t.tour.startExperience}</span>
                   <Check className="w-4 h-4" />
                 </>
               ) : (
                 <>
-                  <span>Próximo</span>
+                  <span>{t.tour.next}</span>
                   <ChevronRight className="w-3.5 h-3.5" />
                 </>
               )}
@@ -330,3 +316,4 @@ export const SplashScreenTour: React.FC<SplashScreenTourProps> = ({
     </div>
   );
 };
+

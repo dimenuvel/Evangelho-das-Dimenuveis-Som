@@ -3,6 +3,7 @@ import { VisualizerMode } from '../../types';
 import { AudioEngine } from '../../audio/AudioEngine';
 import { Sparkles, Maximize2, Minimize2, Eye, EyeOff, Circle, Compass, Activity } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface SpiralVisualizerProps {
   mode: VisualizerMode;
@@ -20,6 +21,7 @@ export const SpiralVisualizer: React.FC<SpiralVisualizerProps> = ({
   dimenuvelColor = '#d4af37',
 }) => {
   const { isLight } = useTheme();
+  const { t, isEnglish } = useLanguage();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const animationFrameRef = useRef<number | null>(null);
@@ -347,14 +349,14 @@ export const SpiralVisualizer: React.FC<SpiralVisualizerProps> = ({
       ) : (
         <div className="w-full h-full flex flex-col items-center justify-center text-[#D4CBBF] p-6 text-center space-y-2">
           <EyeOff className="w-8 h-8 opacity-40 text-[#C5A059]" />
-          <p className="text-sm font-serif italic tracking-wide text-[#C5A059]">Visualizador Desativado</p>
-          <p className="text-xs text-[#D4CBBF] opacity-70">Economiza processamento e mantém a atenção puramente acústica.</p>
+          <p className="text-sm font-serif italic tracking-wide text-[#C5A059]">{t.visualizer.offTitle}</p>
+          <p className="text-xs text-[#D4CBBF] opacity-70">{t.visualizer.offDesc}</p>
           <button
             id="enable-visualizer-btn"
             onClick={() => onModeChange('spiral')}
             className="mt-2 text-xs uppercase tracking-widest px-4 py-2 bg-[#1A1614] hover:bg-[#C5A059] hover:text-[#0F0E0D] text-[#C5A059] border border-[#C5A059] transition-colors"
           >
-            Ativar Espiral
+            {t.visualizer.enableSpiral}
           </button>
         </div>
       )}
@@ -365,11 +367,11 @@ export const SpiralVisualizer: React.FC<SpiralVisualizerProps> = ({
         <div className="flex items-center gap-1.5 bg-[#141210]/90 backdrop-blur-md px-3 py-1 border border-[#C5A05933] text-[10px] uppercase font-mono tracking-wider text-[#C5A059] pointer-events-auto">
           <Sparkles className="w-3.5 h-3.5 text-[#C5A059]" />
           <span>
-            {mode === 'spiral' && 'Espiral Áurea (φ)'}
-            {mode === 'circles' && 'O Padrão (7 Dimenúveis)'}
-            {mode === 'mirror' && 'O Espelho (Estéreo)'}
-            {mode === 'waveform' && 'Onda Harmônica'}
-            {mode === 'off' && 'Desativado'}
+            {mode === 'spiral' && t.visualizer.goldenSpiral}
+            {mode === 'circles' && t.visualizer.concentricCircles}
+            {mode === 'mirror' && t.visualizer.mirrorOscilloscope}
+            {mode === 'waveform' && t.visualizer.harmonicWaveform}
+            {mode === 'off' && (isEnglish ? 'Disabled' : 'Desativado')}
           </span>
         </div>
 
@@ -379,7 +381,7 @@ export const SpiralVisualizer: React.FC<SpiralVisualizerProps> = ({
           <div className="flex items-center bg-[#141210]/90 backdrop-blur-md p-1 border border-[#C5A05933] gap-1">
             <button
               id="mode-spiral-btn"
-              title="Espiral Áurea"
+              title={t.visualizer.goldenSpiral}
               onClick={() => onModeChange('spiral')}
               className={`p-1.5 text-xs transition-colors ${
                 mode === 'spiral' ? 'bg-[#C5A059] text-[#0F0E0D]' : 'text-[#D4CBBF] opacity-60 hover:opacity-100 hover:text-[#C5A059]'
@@ -389,7 +391,7 @@ export const SpiralVisualizer: React.FC<SpiralVisualizerProps> = ({
             </button>
             <button
               id="mode-circles-btn"
-              title="O Padrão (Círculos)"
+              title={t.visualizer.concentricCircles}
               onClick={() => onModeChange('circles')}
               className={`p-1.5 text-xs transition-colors ${
                 mode === 'circles' ? 'bg-[#C5A059] text-[#0F0E0D]' : 'text-[#D4CBBF] opacity-60 hover:opacity-100 hover:text-[#C5A059]'
@@ -399,7 +401,7 @@ export const SpiralVisualizer: React.FC<SpiralVisualizerProps> = ({
             </button>
             <button
               id="mode-mirror-btn"
-              title="O Espelho (Fases)"
+              title={t.visualizer.mirrorOscilloscope}
               onClick={() => onModeChange('mirror')}
               className={`p-1.5 text-xs transition-colors ${
                 mode === 'mirror' ? 'bg-[#C5A059] text-[#0F0E0D]' : 'text-[#D4CBBF] opacity-60 hover:opacity-100 hover:text-[#C5A059]'
@@ -409,7 +411,7 @@ export const SpiralVisualizer: React.FC<SpiralVisualizerProps> = ({
             </button>
             <button
               id="mode-waveform-btn"
-              title="Onda Harmônica"
+              title={t.visualizer.harmonicWaveform}
               onClick={() => onModeChange('waveform')}
               className={`p-1.5 text-xs transition-colors ${
                 mode === 'waveform' ? 'bg-[#C5A059] text-[#0F0E0D]' : 'text-[#D4CBBF] opacity-60 hover:opacity-100 hover:text-[#C5A059]'
@@ -419,7 +421,7 @@ export const SpiralVisualizer: React.FC<SpiralVisualizerProps> = ({
             </button>
             <button
               id="mode-toggle-off-btn"
-              title={mode === 'off' ? 'Ativar Visualizador' : 'Desativar Visualizador'}
+              title={mode === 'off' ? (isEnglish ? 'Enable Visualizer' : 'Ativar Visualizador') : (isEnglish ? 'Disable Visualizer' : 'Desativar Visualizador')}
               onClick={() => onModeChange(mode === 'off' ? 'spiral' : 'off')}
               className={`p-1.5 text-xs transition-colors ${
                 mode === 'off' ? 'bg-red-900 text-red-200' : 'text-[#D4CBBF] opacity-60 hover:opacity-100 hover:text-[#C5A059]'
@@ -432,7 +434,7 @@ export const SpiralVisualizer: React.FC<SpiralVisualizerProps> = ({
           {/* Fullscreen contemplation button */}
           <button
             id="fullscreen-visualizer-btn"
-            title={isFullscreen ? 'Reduzir' : 'Modo Contemplação Tela Cheia'}
+            title={isFullscreen ? t.visualizer.exitFullscreen : t.visualizer.fullscreenContemplation}
             onClick={toggleFullscreen}
             className="p-2 bg-[#141210]/90 backdrop-blur-md border border-[#C5A05933] text-[#D4CBBF] hover:text-[#C5A059] transition-colors"
           >
@@ -445,7 +447,7 @@ export const SpiralVisualizer: React.FC<SpiralVisualizerProps> = ({
       {isPlaying && mode !== 'off' && (
         <div className="absolute bottom-3 left-3 flex items-center gap-2 bg-[#141210]/85 backdrop-blur-md px-3 py-1 border border-[#C5A05933] text-[10px] font-mono text-[#C5A059]">
           <span className="w-1.5 h-1.5 rounded-full bg-[#C5A059] animate-ping" />
-          <span>Frequência • {activeBeatHz > 0 ? `${activeBeatHz.toFixed(1)} Hz` : 'Uníssono'}</span>
+          <span>{isEnglish ? 'Frequency' : 'Frequência'} • {activeBeatHz > 0 ? `${activeBeatHz.toFixed(1)} Hz` : t.simpleMode.unison}</span>
         </div>
       )}
     </div>

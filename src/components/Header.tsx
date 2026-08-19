@@ -1,6 +1,7 @@
 import React from 'react';
-import { Play, Pause, Headphones, Volume2, Sliders, Sparkles, BookOpen, Sun, Moon } from 'lucide-react';
+import { Play, Pause, Headphones, Volume2, BookOpen, Sun, Moon, Globe } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 
 interface HeaderProps {
   currentMode: 'simple' | 'lab';
@@ -22,7 +23,8 @@ export const Header: React.FC<HeaderProps> = ({
   onMasterVolumeChange,
   onOpenGuide,
 }) => {
-  const { theme, toggleTheme, isLight } = useTheme();
+  const { toggleTheme, isLight } = useTheme();
+  const { language, toggleLanguage, t, isEnglish } = useLanguage();
 
   return (
     <header id="main-app-header" className="w-full bg-[#0F0E0DCC] backdrop-blur-md border-b border-[#C5A05933] sticky top-0 z-40">
@@ -38,21 +40,32 @@ export const Header: React.FC<HeaderProps> = ({
 
             <div className="flex flex-col">
               <span className="text-[10px] sm:text-xs tracking-[0.3em] uppercase opacity-60 font-medium text-[#D4CBBF]">
-                Evangelho das Dimenúveis
+                {t.header.appSubtitle}
               </span>
               <h1 className="text-base sm:text-lg font-serif italic text-[#C5A059] leading-tight tracking-wide">
-                Laboratório de Som
+                {t.header.appTitle}
               </h1>
             </div>
           </div>
 
-          {/* Quick buttons on mobile (Theme + Guide) */}
+          {/* Quick buttons on mobile (Language + Theme + Guide) */}
           <div className="flex items-center gap-2 md:hidden">
+            <button
+              id="mobile-lang-toggle-btn"
+              onClick={toggleLanguage}
+              title={t.header.switchLang}
+              aria-label="Toggle language"
+              className="p-1.5 px-2.5 rounded-full border border-[#C5A05944] text-[#C5A059] hover:bg-[#C5A05911] transition-colors text-[10px] font-mono font-bold flex items-center gap-1"
+            >
+              <Globe className="w-3.5 h-3.5" />
+              <span>{isEnglish ? 'EN' : 'PT'}</span>
+            </button>
+
             <button
               id="mobile-theme-toggle-btn"
               onClick={toggleTheme}
-              title={isLight ? 'Modo Escuro (Trevas)' : 'Modo Claro (Luz Sacra)'}
-              aria-label="Alternar tema"
+              title={isLight ? t.header.darkMode : t.header.lightMode}
+              aria-label={t.header.toggleTheme}
               className="p-2 rounded-full border border-[#C5A05944] text-[#C5A059] hover:bg-[#C5A05911] transition-colors"
             >
               {isLight ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
@@ -61,7 +74,7 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               id="mobile-guide-btn"
               onClick={onOpenGuide}
-              title="Conceitos & Avisos"
+              title={t.header.guideTooltip}
               className="p-2 rounded-full border border-[#C5A05944] text-[#C5A059] hover:bg-[#C5A05911] transition-colors"
             >
               <BookOpen className="w-4 h-4" />
@@ -74,9 +87,9 @@ export const Header: React.FC<HeaderProps> = ({
           
           {/* Session State Indicator */}
           <div className="hidden xl:flex flex-col items-end shrink-0">
-            <span className="text-[10px] uppercase tracking-widest opacity-40">Estado de Sessão</span>
+            <span className="text-[10px] uppercase tracking-widest opacity-40">{t.header.sessionState}</span>
             <span className="text-xs font-mono text-[#C5A059] font-medium tracking-wider">
-              {isPlaying ? 'PRESENÇA ATIVA' : 'EM REPOUSO'}
+              {isPlaying ? t.header.activePresence : t.header.atRest}
             </span>
           </div>
 
@@ -93,7 +106,7 @@ export const Header: React.FC<HeaderProps> = ({
                   : 'border border-[#C5A059] text-[#C5A059] hover:bg-[#C5A05911]'
               }`}
             >
-              Simples
+              {t.header.simpleMode}
             </button>
 
             <button
@@ -105,7 +118,7 @@ export const Header: React.FC<HeaderProps> = ({
                   : 'border border-[#C5A059] text-[#C5A059] hover:bg-[#C5A05911]'
               }`}
             >
-              Laboratório
+              {t.header.labMode}
             </button>
           </div>
 
@@ -120,7 +133,7 @@ export const Header: React.FC<HeaderProps> = ({
               step="0.01"
               value={masterVolume}
               onChange={(e) => onMasterVolumeChange(parseFloat(e.target.value))}
-              aria-label="Volume Geral Master"
+              aria-label={t.header.masterVolume}
               className="w-full min-w-[50px] sm:w-28 md:w-32 accent-[#C5A059] cursor-pointer h-2"
             />
             <span className="text-[10px] sm:text-xs font-mono text-[#C5A059] w-7 sm:w-8 text-right shrink-0 font-medium">
@@ -132,7 +145,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             id="header-play-pause-btn"
             onClick={onTogglePlay}
-            title={isPlaying ? 'Pausar Áudio' : 'Iniciar Áudio'}
+            title={isPlaying ? t.header.pauseAudio : t.header.playAudio}
             className={`w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center shrink-0 transition-all shadow-md ${
               isPlaying
                 ? 'border-2 border-[#C5A059] text-[#C5A059] hover:bg-[#C5A05922]'
@@ -146,23 +159,35 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </button>
 
+          {/* Language Switcher Button Desktop */}
+          <button
+            id="desktop-lang-toggle-btn"
+            onClick={toggleLanguage}
+            title={t.header.switchLang}
+            aria-label="Toggle language between Portuguese and English"
+            className="hidden md:flex items-center gap-1.5 px-2.5 py-2 border border-[#C5A05944] hover:bg-[#C5A05911] text-[#C5A059] text-xs uppercase tracking-widest transition-colors shrink-0 rounded-sm font-mono font-bold"
+          >
+            <Globe className="w-3.5 h-3.5" />
+            <span>{isEnglish ? 'EN' : 'PT'}</span>
+          </button>
+
           {/* Theme Toggle Button Desktop */}
           <button
             id="desktop-theme-toggle-btn"
             onClick={toggleTheme}
-            title={isLight ? 'Modo Escuro (Trevas)' : 'Modo Claro (Luz Sacra)'}
-            aria-label="Alternar tema claro/escuro"
+            title={isLight ? t.header.darkMode : t.header.lightMode}
+            aria-label={t.header.toggleTheme}
             className="hidden md:flex items-center gap-1.5 px-3 py-2 border border-[#C5A05944] hover:bg-[#C5A05911] text-[#C5A059] text-xs uppercase tracking-widest transition-colors shrink-0 rounded-sm"
           >
             {isLight ? (
               <>
                 <Moon className="w-4 h-4" />
-                <span className="hidden lg:inline text-[11px]">Escuro</span>
+                <span className="hidden lg:inline text-[11px]">{isEnglish ? 'Dark' : 'Escuro'}</span>
               </>
             ) : (
               <>
                 <Sun className="w-4 h-4" />
-                <span className="hidden lg:inline text-[11px]">Claro</span>
+                <span className="hidden lg:inline text-[11px]">{isEnglish ? 'Light' : 'Claro'}</span>
               </>
             )}
           </button>
@@ -171,11 +196,11 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             id="desktop-guide-btn"
             onClick={onOpenGuide}
-            title="Conceitos & Avisos Legais"
+            title={t.header.guideTooltip}
             className="hidden md:flex items-center gap-1.5 px-3 py-2 border border-[#C5A05944] hover:bg-[#C5A05911] text-[#C5A059] text-xs uppercase tracking-widest transition-colors shrink-0 rounded-sm"
           >
             <BookOpen className="w-4 h-4" />
-            <span className="text-xs">Guia</span>
+            <span className="text-xs">{t.header.guide}</span>
           </button>
 
         </div>
@@ -186,10 +211,11 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="bg-[#0F0E0D] border-t border-[#C5A05922] py-1 px-4 text-center">
         <div className="max-w-7xl mx-auto flex items-center justify-center gap-2 text-[10px] uppercase tracking-widest text-[#D4CBBF] opacity-60">
           <Headphones className="w-3 h-3 text-[#C5A059]" />
-          <span>Fones recomendados para separação estereofônica de batimentos binaurais</span>
+          <span>{t.header.headphonesNotice}</span>
         </div>
       </div>
     </header>
   );
 };
+
 

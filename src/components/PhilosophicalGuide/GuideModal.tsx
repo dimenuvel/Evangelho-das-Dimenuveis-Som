@@ -2,6 +2,7 @@ import React from 'react';
 import { BookOpen, ShieldAlert, Sparkles, Headphones, Compass } from 'lucide-react';
 import { DIMENUVEIS_INFO } from '../../presets/dimenuveisPresets';
 import { useTheme } from '../../context/ThemeContext';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface GuideModalProps {
   isOpen: boolean;
@@ -11,6 +12,7 @@ interface GuideModalProps {
 
 export const GuideModal: React.FC<GuideModalProps> = ({ isOpen, onClose, onOpenTour }) => {
   const { isLight } = useTheme();
+  const { t, getDimenuvelText, isEnglish } = useLanguage();
   if (!isOpen) return null;
 
   return (
@@ -27,10 +29,10 @@ export const GuideModal: React.FC<GuideModalProps> = ({ isOpen, onClose, onOpenT
             </div>
             <div>
               <h2 className="text-xl font-serif italic text-[#C5A059]">
-                Evangelho das Dimenúveis
+                {t.guide.title}
               </h2>
               <p className="text-[10px] uppercase tracking-[0.25em] text-[#D4CBBF] opacity-70">
-                Laboratório de Som & Prática Contemplativa
+                {t.guide.subtitle}
               </p>
             </div>
           </div>
@@ -40,7 +42,7 @@ export const GuideModal: React.FC<GuideModalProps> = ({ isOpen, onClose, onOpenT
             onClick={onClose}
             className="text-xs font-mono uppercase tracking-widest text-[#D4CBBF]/70 hover:text-[#C5A059] bg-transparent transition-colors px-2 py-1 shrink-0"
           >
-            Fechar
+            {isEnglish ? 'Close' : 'Fechar'}
           </button>
         </div>
 
@@ -48,45 +50,60 @@ export const GuideModal: React.FC<GuideModalProps> = ({ isOpen, onClose, onOpenT
         <div className="p-4 bg-[#1A1614] border border-[#C5A05944] text-xs text-[#D4CBBF] space-y-2">
           <div className="flex items-center gap-2 font-serif text-[#C5A059] uppercase tracking-wider text-[11px]">
             <ShieldAlert className="w-4 h-4 text-[#C5A059] shrink-0" />
-            <span>Avisos Importantes & Natureza Experimental</span>
+            <span>{t.guide.experimentalTitle}</span>
           </div>
-          <p className="leading-relaxed opacity-80">
-            • <strong>Ferramenta experimental de áudio</strong> para atenção, contemplação e prática pessoal.
-          </p>
-          <p className="leading-relaxed opacity-80">
-            • As <em>Sete Dimenúveis</em> são conceitos filosóficos e simbólicos do Evangelho, não diagnósticos nem prescrições neurológicas.
-          </p>
+          {t.guide.experimentalPoints.map((point, idx) => (
+            <p key={idx} className="leading-relaxed opacity-80">
+              • {point}
+            </p>
+          ))}
         </div>
 
         {/* Philosophical Concepts */}
         <div className="space-y-3">
           <h3 className="text-xs uppercase tracking-[0.2em] font-serif text-[#C5A059] flex items-center gap-2">
             <Compass className="w-4 h-4 text-[#C5A059]" />
-            <span>Os Pilares Contemplativos</span>
+            <span>{isEnglish ? 'Contemplative Pillars' : 'Os Pilares Contemplativos'}</span>
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
             <div className="p-3 bg-[#1A1614] border border-[#C5A05922]">
-              <strong className="text-[#C5A059] font-serif italic block mb-1">A Espiral</strong>
+              <strong className="text-[#C5A059] font-serif italic block mb-1">
+                {isEnglish ? 'The Spiral' : 'A Espiral'}
+              </strong>
               <p className="text-[#D4CBBF]/80 leading-relaxed text-[11px]">
-                O movimento de retorno ao centro em níveis mais profundos de percepção e presença.
+                {isEnglish
+                  ? 'The motion of returning to the center at deeper levels of perception and presence.'
+                  : 'O movimento de retorno ao centro em níveis mais profundos de percepção e presença.'}
               </p>
             </div>
             <div className="p-3 bg-[#1A1614] border border-[#C5A05922]">
-              <strong className="text-[#C5A059] font-serif italic block mb-1">O Padrão</strong>
+              <strong className="text-[#C5A059] font-serif italic block mb-1">
+                {isEnglish ? 'The Pattern' : 'O Padrão'}
+              </strong>
               <p className="text-[#D4CBBF]/80 leading-relaxed text-[11px]">
-                A harmonia e relação matemática subjacente a todas as formas e ressonâncias.
+                {isEnglish
+                  ? 'The underlying mathematical harmony and relationship across all forms and resonances.'
+                  : 'A harmonia e relação matemática subjacente a todas as formas e ressonâncias.'}
               </p>
             </div>
             <div className="p-3 bg-[#1A1614] border border-[#C5A05922]">
-              <strong className="text-[#C5A059] font-serif italic block mb-1">O Espelho</strong>
+              <strong className="text-[#C5A059] font-serif italic block mb-1">
+                {isEnglish ? 'The Mirror' : 'O Espelho'}
+              </strong>
               <p className="text-[#D4CBBF]/80 leading-relaxed text-[11px]">
-                A observação lúcida sem julgamento; o som como reflexo da própria atenção interna.
+                {isEnglish
+                  ? 'Lucid observation without judgment; sound as a mirror of inner attention.'
+                  : 'A observação lúcida sem julgamento; o som como reflexo da própria atenção interna.'}
               </p>
             </div>
             <div className="p-3 bg-[#1A1614] border border-[#C5A05922]">
-              <strong className="text-[#C5A059] font-serif italic block mb-1">Abidar</strong>
+              <strong className="text-[#C5A059] font-serif italic block mb-1">
+                {isEnglish ? 'Abidar' : 'Abidar'}
+              </strong>
               <p className="text-[#D4CBBF]/80 leading-relaxed text-[11px]">
-                Permanecer e habitar a presença consciente no agora, sem pressa e sem exigências.
+                {isEnglish
+                  ? 'Remaining and inhabiting conscious presence in the now, without haste or demands.'
+                  : 'Permanecer e habitar a presença consciente no agora, sem pressa e sem exigências.'}
               </p>
             </div>
           </div>
@@ -96,11 +113,12 @@ export const GuideModal: React.FC<GuideModalProps> = ({ isOpen, onClose, onOpenT
         <div className="space-y-3">
           <h3 className="text-xs uppercase tracking-[0.2em] font-serif text-[#C5A059] flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-[#C5A059]" />
-            <span>As Sete Dimenúveis Canônicas</span>
+            <span>{t.guide.sevenDimenuveisTitle}</span>
           </h3>
           <div className="space-y-2">
             {DIMENUVEIS_INFO.map((d) => {
               const badgeColor = isLight ? d.accentColor : d.color;
+              const localized = getDimenuvelText(d.id);
               return (
                 <div
                   key={d.id}
@@ -114,10 +132,10 @@ export const GuideModal: React.FC<GuideModalProps> = ({ isOpen, onClose, onOpenT
                   </span>
                   <div className="space-y-0.5 text-xs">
                     <div className="flex items-center gap-2">
-                      <span className="font-serif italic font-bold text-[#C5A059]">{d.name}</span>
+                      <span className="font-serif italic font-bold text-[#C5A059]">{localized.name}</span>
                       <span className="text-[10px] font-mono text-[#D4CBBF]/75">({d.suggestedBaseFreq} Hz)</span>
                     </div>
-                    <p className="text-[#D4CBBF] leading-relaxed text-[11px]">{d.description}</p>
+                    <p className="text-[#D4CBBF] leading-relaxed text-[11px]">{localized.description}</p>
                   </div>
                 </div>
               );
@@ -129,9 +147,9 @@ export const GuideModal: React.FC<GuideModalProps> = ({ isOpen, onClose, onOpenT
         <div className="p-3.5 bg-[#1A1614] border border-[#C5A05922] flex items-start gap-3 text-xs">
           <Headphones className="w-4 h-4 text-[#C5A059] shrink-0 mt-0.5" />
           <div className="space-y-1">
-            <span className="font-serif italic text-[#C5A059] block">Fones de Ouvido Estéreo</span>
+            <span className="font-serif italic text-[#C5A059] block">{t.guide.headphonesTitle}</span>
             <p className="text-[#D4CBBF]/80 leading-relaxed text-[11px]">
-              O fenômeno do batimento binaural ocorre quando o canal esquerdo e o direito recebem frequências ligeiramente distintas em isolamento acústico. O sistema neural integra as duas frequências e sintetiza a percepção rítmica diferencial.
+              {t.guide.headphonesDesc}
             </p>
           </div>
         </div>
@@ -144,7 +162,7 @@ export const GuideModal: React.FC<GuideModalProps> = ({ isOpen, onClose, onOpenT
               onClick={onOpenTour}
               className="px-4 py-2 border border-[#C5A05944] text-[#C5A059] hover:bg-[#C5A05911] text-xs uppercase tracking-widest transition-colors font-medium"
             >
-              Ver Tour do App
+              {t.guide.viewTour}
             </button>
           ) : <div />}
           <button
@@ -152,10 +170,11 @@ export const GuideModal: React.FC<GuideModalProps> = ({ isOpen, onClose, onOpenT
             onClick={onClose}
             className="px-6 py-2.5 bg-[#C5A059] text-[#0F0E0D] text-xs uppercase tracking-widest font-bold hover:bg-[#d6b26a] transition-colors"
           >
-            Entendido • Retornar ao Laboratório
+            {t.guide.returnToLab}
           </button>
         </div>
       </div>
     </div>
   );
 };
+

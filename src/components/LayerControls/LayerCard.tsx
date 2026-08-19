@@ -11,6 +11,7 @@ import {
   Check,
   Edit2,
 } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface LayerCardProps {
   layer: AudioLayer;
@@ -35,12 +36,22 @@ export const LayerCard: React.FC<LayerCardProps> = ({
   onToggleSolo,
   onToggleEnabled,
 }) => {
+  const { t, isEnglish } = useLanguage();
   const [isEditingName, setIsEditingName] = useState(false);
   const [nameInput, setNameInput] = useState(layer.name);
   const [bpmInputMode, setBpmInputMode] = useState(false);
 
   const beatDiff = layer.type === 'binaural' ? calculateBeatDifference(layer.leftFreq, layer.rightFreq) : 0;
   const beatInfo = getBeatBandInfo(beatDiff);
+
+  const getLocalizedBandName = () => {
+    if (beatDiff === 0) return t.bands.unison.name;
+    if (beatDiff < 4) return t.bands.delta.name;
+    if (beatDiff < 8) return t.bands.theta.name;
+    if (beatDiff < 14) return t.bands.alpha.name;
+    if (beatDiff < 30) return t.bands.beta.name;
+    return t.bands.gamma.name;
+  };
 
   const handleNameSave = () => {
     setIsEditingName(false);
@@ -95,7 +106,7 @@ export const LayerCard: React.FC<LayerCardProps> = ({
             type="checkbox"
             checked={layer.enabled}
             onChange={() => onToggleEnabled(layer.id)}
-            title={layer.enabled ? 'Desativar Camada' : 'Ativar Camada'}
+            title={layer.enabled ? (isEnglish ? 'Disable Layer' : 'Desativar Camada') : (isEnglish ? 'Enable Layer' : 'Ativar Camada')}
             className="w-4 h-4 accent-[#C5A059] cursor-pointer shrink-0"
           />
 
@@ -122,7 +133,7 @@ export const LayerCard: React.FC<LayerCardProps> = ({
             <div
               onClick={() => setIsEditingName(true)}
               className="flex items-center gap-1.5 sm:gap-2 cursor-pointer group min-w-0 flex-1 overflow-hidden"
-              title="Clique para renomear"
+              title={isEnglish ? 'Click to rename' : 'Clique para renomear'}
             >
               <h4 className="text-xs sm:text-sm font-serif italic text-[#D4CBBF] group-hover:text-[#C5A059] transition-colors truncate">
                 {layer.name}
@@ -143,7 +154,7 @@ export const LayerCard: React.FC<LayerCardProps> = ({
                 ? 'bg-[#C5A059] text-[#0F0E0D]'
                 : 'bg-[#0F0E0D] border border-[#C5A05933] text-[#D4CBBF]/60 hover:text-[#C5A059] hover:border-[#C5A059]'
             }`}
-            title="Solo (ouvir apenas esta camada)"
+            title={isEnglish ? 'Solo (listen only to this layer)' : 'Solo (ouvir apenas esta camada)'}
           >
             SOLO
           </button>
@@ -157,7 +168,7 @@ export const LayerCard: React.FC<LayerCardProps> = ({
                 ? 'bg-red-900/80 text-red-200 border border-red-700'
                 : 'bg-[#0F0E0D] border border-[#C5A05933] text-[#D4CBBF]/60 hover:text-[#C5A059] hover:border-[#C5A059]'
             }`}
-            title="Mudo (silenciar camada)"
+            title={isEnglish ? 'Mute (silence layer)' : 'Mudo (silenciar camada)'}
           >
             MUTE
           </button>
@@ -167,7 +178,7 @@ export const LayerCard: React.FC<LayerCardProps> = ({
             id={`layer-clone-btn-${layer.id}`}
             onClick={() => onDuplicate(layer.id)}
             className="p-1 sm:p-1.5 bg-[#0F0E0D] border border-[#C5A05933] text-[#D4CBBF]/60 hover:text-[#C5A059] hover:border-[#C5A059] transition-colors shrink-0"
-            title="Duplicar Camada"
+            title={isEnglish ? 'Duplicate Layer' : 'Duplicar Camada'}
           >
             <Copy className="w-3 h-3" />
           </button>
@@ -178,7 +189,7 @@ export const LayerCard: React.FC<LayerCardProps> = ({
               id={`layer-delete-btn-${layer.id}`}
               onClick={() => onRemove(layer.id)}
               className="p-1 sm:p-1.5 bg-[#0F0E0D] border border-[#C5A05933] text-[#D4CBBF]/60 hover:text-red-400 hover:border-red-500/50 transition-colors shrink-0"
-              title="Excluir Camada"
+              title={isEnglish ? 'Delete Layer' : 'Excluir Camada'}
             >
               <Trash2 className="w-3 h-3" />
             </button>
@@ -190,42 +201,45 @@ export const LayerCard: React.FC<LayerCardProps> = ({
       <div className="p-4 sm:p-5 space-y-4 text-xs">
         
         {/* Layer Type & Waveform Selector */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-[#C5A05922]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#C5A05922]">
           
           {/* Layer Type */}
           <div className="flex items-center gap-2">
-            <span className="text-[10px] uppercase tracking-widest text-[#D4CBBF] opacity-60">Tipo:</span>
+            <span className="text-[10px] uppercase tracking-widest text-[#D4CBBF] opacity-60 shrink-0">{t.layerCard.type}:</span>
             <select
+              id={`layer-type-select-${layer.id}`}
               value={layer.type}
               onChange={(e) => onUpdate(layer.id, { type: e.target.value as LayerType })}
-              className="bg-[#0F0E0D] text-[#C5A059] px-2.5 py-1 border border-[#C5A05933] text-xs uppercase tracking-wider outline-none cursor-pointer"
+              className="bg-[#0F0E0D] text-[#C5A059] px-2.5 py-1 border border-[#C5A05933] text-xs uppercase tracking-wider outline-none cursor-pointer w-full sm:w-auto"
             >
-              <option value="binaural">Par Binaural Estéreo (Esq/Dir)</option>
-              <option value="monaural">Tom Monofônico / Harmônico</option>
-              <option value="ambient">Tom de Ambiente / Textura</option>
+              <option value="binaural">{t.layerCard.binauralPair}</option>
+              <option value="monaural">{t.layerCard.monauralTone}</option>
+              <option value="ambient">{t.layerCard.ambientTexture}</option>
             </select>
           </div>
 
           {/* Waveform Selector */}
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] uppercase tracking-widest text-[#D4CBBF] opacity-60">Onda:</span>
-            <div className="flex items-center bg-[#0F0E0D] p-0.5 border border-[#C5A05933] gap-0.5">
+          <div className="flex items-center gap-2 max-w-full overflow-hidden">
+            <span className="text-[10px] uppercase tracking-widest text-[#D4CBBF] opacity-60 shrink-0">{t.layerCard.waveform}:</span>
+            <div className="grid grid-cols-4 bg-[#0F0E0D] p-0.5 border border-[#C5A05933] gap-0.5 w-full sm:w-auto">
               {(['sine', 'triangle', 'square', 'sawtooth'] as WaveformType[]).map((w) => {
                 const labels: Record<WaveformType, string> = {
-                  sine: 'Seno',
-                  triangle: 'Triângulo',
-                  square: 'Quadrada',
-                  sawtooth: 'Serra',
+                  sine: t.layerCard.sine,
+                  triangle: t.layerCard.triangle,
+                  square: t.layerCard.square,
+                  sawtooth: t.layerCard.sawtooth,
                 };
                 return (
                   <button
                     key={w}
+                    id={`layer-waveform-${layer.id}-${w}`}
                     type="button"
                     onClick={() => onUpdate(layer.id, { waveform: w })}
-                    className={`px-2 py-1 text-[10px] uppercase tracking-wider transition-colors ${
+                    title={`${labels[w]} (${w})`}
+                    className={`px-1.5 sm:px-2 py-1 text-[9px] sm:text-[10px] uppercase tracking-wider transition-colors text-center truncate ${
                       layer.waveform === w
-                        ? 'bg-[#C5A059] text-[#0F0E0D] font-bold'
-                        : 'text-[#D4CBBF] opacity-60 hover:opacity-100'
+                        ? 'bg-[#C5A059] text-[#0F0E0D] font-bold shadow-sm'
+                        : 'text-[#D4CBBF] opacity-60 hover:opacity-100 hover:text-[#C5A059]'
                     }`}
                   >
                     {labels[w]}
@@ -246,7 +260,7 @@ export const LayerCard: React.FC<LayerCardProps> = ({
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-[10px] uppercase tracking-widest text-[#D4CBBF] opacity-70 flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#C5A059]" />
-                    Canal Esquerdo (Left)
+                    {t.layerCard.leftChannel}
                   </span>
                   <span className="font-mono font-bold text-[#C5A059]">{layer.leftFreq.toFixed(1)} Hz</span>
                 </div>
@@ -277,7 +291,7 @@ export const LayerCard: React.FC<LayerCardProps> = ({
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-[10px] uppercase tracking-widest text-[#D4CBBF] opacity-70 flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#C5A059]" />
-                    Canal Direito (Right)
+                    {t.layerCard.rightChannel}
                   </span>
                   <span className="font-mono font-bold text-[#C5A059]">{layer.rightFreq.toFixed(1)} Hz</span>
                 </div>
@@ -308,13 +322,13 @@ export const LayerCard: React.FC<LayerCardProps> = ({
             {/* Calculated Binaural Difference Capsule */}
             <div className="pt-2 border-t border-[#C5A05922] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div className="flex items-center gap-2">
-                <span className="text-[10px] uppercase tracking-wider text-[#D4CBBF] opacity-60">Batimento Binaural (|Esq − Dir|):</span>
+                <span className="text-[10px] uppercase tracking-wider text-[#D4CBBF] opacity-60">{t.layerCard.binauralBeatLabel}:</span>
                 <span className="font-mono font-bold text-sm text-[#C5A059]">
                   {beatDiff.toFixed(2)} Hz
                 </span>
               </div>
               <span className="text-[10px] font-mono uppercase tracking-widest text-[#C5A059] bg-[#0F0E0D] px-2.5 py-0.5 border border-[#C5A05933]">
-                {beatInfo.rhythmBand}
+                {getLocalizedBandName()}
               </span>
             </div>
           </div>
@@ -322,7 +336,7 @@ export const LayerCard: React.FC<LayerCardProps> = ({
           /* Single Frequency Slider for Monaural / Texture */
           <div className="space-y-2 bg-[#1A1614] p-4 border border-[#C5A05933]">
             <div className="flex items-center justify-between text-xs">
-              <span className="text-[10px] uppercase tracking-widest text-[#D4CBBF] opacity-60">Frequência Central</span>
+              <span className="text-[10px] uppercase tracking-widest text-[#D4CBBF] opacity-60">{t.layerCard.centerFrequency}</span>
               <span className="font-mono font-bold text-[#C5A059]">{layer.leftFreq.toFixed(1)} Hz</span>
             </div>
             <input
@@ -343,7 +357,7 @@ export const LayerCard: React.FC<LayerCardProps> = ({
         {/* Quick Harmonic Reference Buttons */}
         <div className="space-y-1.5">
           <span className="text-[9px] text-[#C5A059] uppercase tracking-[0.2em] font-semibold">
-            Harmônicos de Referência
+            {t.layerCard.harmonicReference}
           </span>
           <div className="flex flex-wrap gap-1.5">
             {HARMONIC_PRESETS.slice(0, 5).map((h) => (
@@ -367,7 +381,7 @@ export const LayerCard: React.FC<LayerCardProps> = ({
             <div className="flex items-center justify-between text-xs">
               <span className="text-[10px] uppercase tracking-widest text-[#D4CBBF] opacity-60 flex items-center gap-1.5">
                 <Volume2 className="w-3 h-3 text-[#C5A059]" />
-                Volume da Camada
+                {t.layerCard.layerVolume}
               </span>
               <span className="font-mono text-[#C5A059]">{Math.round(layer.volume * 100)}%</span>
             </div>
@@ -385,13 +399,13 @@ export const LayerCard: React.FC<LayerCardProps> = ({
           {/* Pan */}
           <div className="space-y-1">
             <div className="flex items-center justify-between text-xs">
-              <span className="text-[10px] uppercase tracking-widest text-[#D4CBBF] opacity-60">Balanço Estéreo (Pan)</span>
+              <span className="text-[10px] uppercase tracking-widest text-[#D4CBBF] opacity-60">{t.layerCard.stereoPan}</span>
               <span className="font-mono text-[#C5A059]">
                 {layer.pan === 0
-                  ? 'Centro'
+                  ? (isEnglish ? 'Center' : 'Centro')
                   : layer.pan < 0
-                  ? `Esq ${Math.abs(Math.round(layer.pan * 100))}%`
-                  : `Dir ${Math.round(layer.pan * 100)}%`}
+                  ? `${isEnglish ? 'Left' : 'Esq'} ${Math.abs(Math.round(layer.pan * 100))}%`
+                  : `${isEnglish ? 'Right' : 'Dir'} ${Math.round(layer.pan * 100)}%`}
               </span>
             </div>
             <input
@@ -422,7 +436,7 @@ export const LayerCard: React.FC<LayerCardProps> = ({
               />
               <span className="text-xs uppercase tracking-wider font-semibold text-[#D4CBBF] flex items-center gap-1.5">
                 <Activity className="w-3.5 h-3.5 text-[#C5A059]" />
-                Modulação Rítmica (Pulso LFO)
+                {t.layerCard.rhythmicModulation}
               </span>
             </label>
 
@@ -432,7 +446,7 @@ export const LayerCard: React.FC<LayerCardProps> = ({
                 onClick={() => setBpmInputMode(!bpmInputMode)}
                 className="text-[10px] uppercase tracking-wider text-[#C5A059] hover:underline"
               >
-                {bpmInputMode ? 'Alternar para Hz' : 'Alternar para BPM'}
+                {bpmInputMode ? (isEnglish ? 'Switch to Hz' : 'Alternar para Hz') : (isEnglish ? 'Switch to BPM' : 'Alternar para BPM')}
               </button>
             )}
           </div>
@@ -444,7 +458,7 @@ export const LayerCard: React.FC<LayerCardProps> = ({
                 <div className="space-y-1">
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-[10px] uppercase tracking-widest text-[#D4CBBF] opacity-60">
-                      {bpmInputMode ? 'Cadência (BPM)' : 'Frequência do Pulso (Hz)'}
+                      {bpmInputMode ? (isEnglish ? 'Cadence (BPM)' : 'Cadência (BPM)') : (isEnglish ? 'Pulse Frequency (Hz)' : 'Frequência do Pulso (Hz)')}
                     </span>
                     <span className="font-mono text-[#C5A059]">
                       {bpmInputMode
@@ -476,7 +490,7 @@ export const LayerCard: React.FC<LayerCardProps> = ({
                 {/* Depth */}
                 <div className="space-y-1">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-[10px] uppercase tracking-widest text-[#D4CBBF] opacity-60">Profundidade</span>
+                    <span className="text-[10px] uppercase tracking-widest text-[#D4CBBF] opacity-60">{t.layerCard.depth}</span>
                     <span className="font-mono text-[#C5A059]">
                       {Math.round(layer.modulation.depth * 100)}%
                     </span>
@@ -503,7 +517,7 @@ export const LayerCard: React.FC<LayerCardProps> = ({
               {/* Mode: Continuous vs Pulse, Auto-pan */}
               <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[#C5A05922] text-[10px] uppercase tracking-wider">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[#D4CBBF] opacity-60">Modo:</span>
+                  <span className="text-[#D4CBBF] opacity-60">{t.layerCard.type}:</span>
                   <button
                     type="button"
                     onClick={() =>
@@ -517,7 +531,7 @@ export const LayerCard: React.FC<LayerCardProps> = ({
                         : 'bg-[#0F0E0D] border-[#C5A05933] text-[#D4CBBF] hover:border-[#C5A059]'
                     }`}
                   >
-                    Contínuo
+                    {t.layerCard.continuous}
                   </button>
                   <button
                     type="button"
@@ -532,7 +546,7 @@ export const LayerCard: React.FC<LayerCardProps> = ({
                         : 'bg-[#0F0E0D] border-[#C5A05933] text-[#D4CBBF] hover:border-[#C5A059]'
                     }`}
                   >
-                    Pulsado
+                    {t.layerCard.pulsed}
                   </button>
                 </div>
 
@@ -547,7 +561,7 @@ export const LayerCard: React.FC<LayerCardProps> = ({
                     }
                     className="w-3 h-3 accent-[#C5A059]"
                   />
-                  <span>Auto-Pan Estéreo</span>
+                  <span>{t.layerCard.autoPan}</span>
                 </label>
               </div>
 
@@ -559,3 +573,4 @@ export const LayerCard: React.FC<LayerCardProps> = ({
     </div>
   );
 };
+

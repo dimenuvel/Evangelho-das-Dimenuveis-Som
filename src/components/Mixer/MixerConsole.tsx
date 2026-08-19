@@ -1,6 +1,7 @@
 import React from 'react';
 import { AudioLayer } from '../../types';
 import { ShieldCheck, Sliders } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 interface MixerConsoleProps {
   layers: AudioLayer[];
@@ -23,6 +24,7 @@ export const MixerConsole: React.FC<MixerConsoleProps> = ({
   onToggleEnabled,
   isPlaying,
 }) => {
+  const { t, isEnglish } = useLanguage();
   const hasSolo = layers.some((l) => l.solo && l.enabled);
 
   return (
@@ -36,17 +38,17 @@ export const MixerConsole: React.FC<MixerConsoleProps> = ({
           </div>
           <div>
             <h3 className="text-sm sm:text-base font-serif italic text-[#C5A059]">
-              Console de Mixagem Acústica
+              {t.mixer.acousticConsoleTitle}
             </h3>
             <p className="text-[11px] text-[#D4CBBF] opacity-70">
-              Controle individual de ganho, balanço estéreo e barramento de soma com limitador suave
+              {t.mixer.acousticConsoleDesc}
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2 text-[10px] uppercase font-mono tracking-widest text-[#C5A059] bg-[#1A1614] px-3 py-1.5 border border-[#C5A05933]">
           <ShieldCheck className="w-3.5 h-3.5 text-[#C5A059]" />
-          <span>Proteção Anti-Clipping Ativa</span>
+          <span>{t.mixer.antiClippingActive}</span>
         </div>
       </div>
 
@@ -88,7 +90,7 @@ export const MixerConsole: React.FC<MixerConsoleProps> = ({
 
                 {/* Pan Slider */}
                 <div className="space-y-1 text-center bg-[#0F0E0D] p-2 border border-[#C5A05922]">
-                  <span className="text-[8px] uppercase tracking-widest text-[#D4CBBF] opacity-60 block">Pan</span>
+                  <span className="text-[8px] uppercase tracking-widest text-[#D4CBBF] opacity-60 block">{t.mixer.panLabel}</span>
                   <input
                     type="range"
                     min="-1"
@@ -118,7 +120,7 @@ export const MixerConsole: React.FC<MixerConsoleProps> = ({
                       step="0.01"
                       value={layer.volume}
                       onChange={(e) => onUpdateLayer(layer.id, { volume: parseFloat(e.target.value) })}
-                      aria-label={`Volume da Camada ${layer.name}`}
+                      aria-label={`Volume - ${layer.name}`}
                       className="accent-[#C5A059] cursor-pointer h-28"
                       style={{
                         writingMode: 'vertical-lr',
@@ -185,7 +187,7 @@ export const MixerConsole: React.FC<MixerConsoleProps> = ({
                       : 'bg-[#0F0E0D] text-[#D4CBBF] opacity-40 border-[#C5A05922]'
                   }`}
                 >
-                  {layer.enabled ? 'Ativa' : 'Inativa'}
+                  {layer.enabled ? (isEnglish ? 'Active' : 'Ativa') : (isEnglish ? 'Inactive' : 'Inativa')}
                 </button>
 
               </div>
@@ -203,19 +205,19 @@ export const MixerConsole: React.FC<MixerConsoleProps> = ({
                 M
               </span>
               <h4 className="text-xs font-serif italic text-[#C5A059]">
-                Master Geral
+                {t.mixer.masterFader}
               </h4>
               <span className="text-[8px] text-[#C5A059] uppercase font-semibold tracking-[0.2em] block">
-                Saída Estéreo
+                {t.mixer.stereoOutput}
               </span>
             </div>
 
             {/* Limiter / Dynamics Indicator */}
             <div className="bg-[#0F0E0D] p-2 border border-[#C5A05933] text-center space-y-1">
-              <span className="text-[8px] uppercase tracking-widest text-[#D4CBBF] opacity-60 block">Limitador</span>
+              <span className="text-[8px] uppercase tracking-widest text-[#D4CBBF] opacity-60 block">{t.mixer.limiter}</span>
               <div className="flex items-center justify-center gap-1.5 text-[9px] text-[#C5A059] font-mono">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#C5A059] animate-pulse" />
-                <span>Soft Clip -4dB</span>
+                <span>{t.mixer.softClip}</span>
               </div>
             </div>
 
@@ -230,7 +232,7 @@ export const MixerConsole: React.FC<MixerConsoleProps> = ({
                   step="0.01"
                   value={masterVolume}
                   onChange={(e) => onMasterVolumeChange(parseFloat(e.target.value))}
-                  aria-label="Volume Master Geral"
+                  aria-label="Master Volume"
                   className="accent-[#C5A059] cursor-pointer h-28"
                   style={{
                     writingMode: 'vertical-lr',
@@ -277,7 +279,7 @@ export const MixerConsole: React.FC<MixerConsoleProps> = ({
               onClick={() => onMasterVolumeChange(0.7)}
               className="w-full py-1.5 bg-[#0F0E0D] hover:bg-[#1A1614] text-[9px] uppercase tracking-widest font-semibold text-[#C5A059] border border-[#C5A05933] hover:border-[#C5A059] transition-colors"
             >
-              Padrão (70%)
+              {isEnglish ? 'Default (70%)' : 'Padrão (70%)'}
             </button>
 
           </div>
@@ -288,3 +290,4 @@ export const MixerConsole: React.FC<MixerConsoleProps> = ({
     </div>
   );
 };
+
