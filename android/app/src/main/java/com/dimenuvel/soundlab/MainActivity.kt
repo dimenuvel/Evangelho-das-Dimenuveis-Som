@@ -1,4 +1,4 @@
-package com.dimenuveis.soundlab
+package com.dimenuvel.soundlab
 
 import android.annotation.SuppressLint
 import android.content.Intent

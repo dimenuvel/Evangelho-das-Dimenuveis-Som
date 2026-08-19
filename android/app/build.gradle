@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.dimenuveis.soundlab'
+    namespace 'com.dimenuvel.soundlab'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.dimenuveis.soundlab"
+        applicationId "com.dimenuvel.soundlab"
         minSdk 24
         targetSdk 34
         versionCode 3
